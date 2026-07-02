@@ -102,6 +102,11 @@
     .confirm-body{padding:16px 15px;color:#111827;font-size:13px;white-space:pre-line;line-height:1.5}
     .confirm-actions{padding:12px 15px;background:#f8fafc;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:7px}
     .confirm-actions button{min-width:76px}
+    .confirm-reason{padding:0 15px 14px;display:none}
+    .confirm-reason.show{display:block}
+    .confirm-reason label{display:block;font-size:11px;font-weight:950;color:#374151;margin-bottom:5px}
+    .confirm-reason textarea{width:100%;min-height:74px;resize:vertical}
+    .confirm-error{margin-top:6px;color:#dc2626;font-size:11px;font-weight:900;display:none}
 
 
     @media(max-width:1300px){.cards{grid-template-columns:repeat(4,1fr)}.vendor-grid{grid-template-columns:repeat(3,1fr)}.app{grid-template-columns:170px minmax(0,1fr)}}
@@ -182,6 +187,10 @@
       <div class="panel"><div class="panel-head"><div><div class="panel-title">입고완료 목록</div><div class="panel-sub">미송수량이 0인 품목입니다.</div></div><button type="button" onclick="downloadCsv('complete')">완료 내려받기</button></div><div class="panel-body"><div id="completeTable"></div></div></div>
     </section>
 
+    <section id="deleted" class="section">
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">삭제내역</div><div class="panel-sub">잘못 주문해서 삭제한 발주건과 삭제사유를 히스토리로 남깁니다.</div></div><button type="button" onclick="downloadCsv('deleted')">삭제내역 내려받기</button></div><div class="panel-body"><div id="deletedTable"></div></div></div>
+    </section>
+
     <section id="master" class="section">
       <div class="grid cols-2">
         <div class="panel"><div class="panel-head"><div><div class="panel-title">업체 마스터</div><div class="panel-sub">업체를 미리 등록해서 검색/선택합니다.</div></div></div><div class="panel-body">
@@ -204,7 +213,7 @@
           <div style="margin-top:12px" class="actions"><button type="button" class="btn-blue" onclick="refreshData()">구글시트 데이터 불러오기</button><button type="button" class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button><button type="button" onclick="downloadCsv('all')">전체 내려받기 다운로드</button><button type="button" class="btn-red" onclick="clearLocalOnly()">로컬 임시데이터 삭제</button></div>
         </div>
       </div>
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">설치 순서</div><div class="panel-sub">처음 연결할 때 이 순서대로 진행하세요.</div></div></div><div class="panel-body"><ol><li>구글시트에서 <b>확장 프로그램 → Apps Script</b>를 엽니다.</li><li><b>google_apps_script.gs</b> 내용을 전체 붙여넣고 저장합니다.</li><li>함수 선택에서 <b>초기설정</b> 또는 <b>setup</b>을 선택한 뒤 실행합니다.</li><li>구글 권한 승인 후 시트 하단에 <b>업체마스터 / 상품마스터 / 발주입고내역</b> 탭이 생겼는지 확인합니다.</li><li><b>배포 → 새 배포 → 웹 앱</b>으로 배포합니다. 실행 사용자는 <b>나</b>, 액세스 권한은 <b>링크가 있는 모든 사용자</b>로 설정합니다.</li><li>배포 완료 화면에서 <b>/exec</b>로 끝나는 웹 앱 URL을 복사합니다.</li><li>이 화면 위쪽 <b>웹 앱 URL 붙여넣기</b> 칸에 붙여넣고 <b>연결 저장 → 연결 테스트</b>를 누릅니다.</li><li>연결 성공이 나오면 <b>기존 엑셀 데이터 구글시트 업로드</b>를 한 번만 누릅니다.</li></ol></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">설치 순서</div><div class="panel-sub">처음 연결할 때 이 순서대로 진행하세요.</div></div></div><div class="panel-body"><ol><li>구글시트에서 <b>확장 프로그램 → Apps Script</b>를 엽니다.</li><li><b>google_apps_script.gs</b> 내용을 전체 붙여넣고 저장합니다.</li><li>함수 선택에서 <b>초기설정</b> 또는 <b>setup</b>을 선택한 뒤 실행합니다.</li><li>구글 권한 승인 후 시트 하단에 <b>업체마스터 / 상품마스터 / 발주입고내역 / 삭제내역</b> 탭이 생겼는지 확인합니다.</li><li><b>배포 → 새 배포 → 웹 앱</b>으로 배포합니다. 실행 사용자는 <b>나</b>, 액세스 권한은 <b>링크가 있는 모든 사용자</b>로 설정합니다.</li><li>배포 완료 화면에서 <b>/exec</b>로 끝나는 웹 앱 URL을 복사합니다.</li><li>이 화면 위쪽 <b>웹 앱 URL 붙여넣기</b> 칸에 붙여넣고 <b>연결 저장 → 연결 테스트</b>를 누릅니다.</li><li>연결 성공이 나오면 <b>기존 엑셀 데이터 구글시트 업로드</b>를 한 번만 누릅니다.</li></ol></div></div>
     </section>
   </main>
 </div>
@@ -213,6 +222,11 @@
   <div class="confirm-box">
     <div class="confirm-head" id="confirmTitle">확인</div>
     <div class="confirm-body" id="confirmText"></div>
+    <div class="confirm-reason" id="confirmReasonWrap">
+      <label id="confirmReasonLabel">삭제사유</label>
+      <textarea id="confirmReason" placeholder="삭제 사유를 입력하세요. 예: 컬러 오주문, 중복 등록, 업체 품절"></textarea>
+      <div class="confirm-error" id="confirmReasonError">삭제사유를 입력해야 삭제할 수 있습니다.</div>
+    </div>
     <div class="confirm-actions">
       <button type="button" class="btn-soft" id="confirmCancel">취소</button>
       <button type="button" class="btn-dark" id="confirmOk">확인</button>
@@ -221,27 +235,36 @@
 </div>
 <datalist id="vendorList"></datalist><datalist id="productList"></datalist>
 <script>
-const STORAGE_KEY='ddm_order_inbound_state_v2';
+const STORAGE_KEY='ddm_order_inbound_state_v3';
 const API_KEY='ddm_order_inbound_api_url';
 const seedRows=(window.ORDER_INBOUND_DATA?.rows||[]).map((r,i)=>({id:r.id||uid('o'),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),vendor:r.vendor||'',product:r.product||'',orderProduct:r.orderProduct||r.product||'',color:r.color||'',size:r.size||'FREE',ordered:Number(r.ordered||0),received:Number(r.received||0),note:r.note||'',orderRound:r.orderRound||'1차 발주',orderedAt:r.orderedAt||new Date().toISOString()}));
 let apiUrl=localStorage.getItem(API_KEY)||'';
 let state=loadLocal();
 let currentView='dashboard';
 let selectedPendingVendor='';
-const navItems=[['dashboard','대시보드'],['register','주문상품 등록'],['inbound','입고 처리'],['pending','업체별 미송'],['complete','입고완료'],['master','마스터 등록'],['settings','연동 설정']];
+const navItems=[['dashboard','대시보드'],['register','주문상품 등록'],['inbound','입고 처리'],['pending','업체별 미송'],['complete','입고완료'],['deleted','삭제내역'],['master','마스터 등록'],['settings','연동 설정']];
 
-function askConfirm(message,{title='확인',okText='확인',cancelText='취소',danger=false}={}){
+function askConfirm(message,{title='확인',okText='확인',cancelText='취소',danger=false,reason=false,reasonRequired=false,reasonLabel='삭제사유',reasonPlaceholder='삭제 사유를 입력하세요. 예: 컬러 오주문, 중복 등록, 업체 품절'}={}){
   return new Promise(resolve=>{
     const mask=document.getElementById('confirmMask');
     const text=document.getElementById('confirmText');
     const titleEl=document.getElementById('confirmTitle');
     const ok=document.getElementById('confirmOk');
     const cancel=document.getElementById('confirmCancel');
+    const reasonWrap=document.getElementById('confirmReasonWrap');
+    const reasonInput=document.getElementById('confirmReason');
+    const reasonLabelEl=document.getElementById('confirmReasonLabel');
+    const reasonError=document.getElementById('confirmReasonError');
     titleEl.textContent=title;
     text.textContent=message;
     ok.textContent=okText;
     cancel.textContent=cancelText;
     ok.className=danger?'btn-red':'btn-dark';
+    reasonWrap.classList.toggle('show',!!reason);
+    reasonLabelEl.textContent=reasonLabel;
+    reasonInput.placeholder=reasonPlaceholder;
+    reasonInput.value='';
+    reasonError.style.display='none';
     mask.classList.add('show');
     function done(v){
       mask.classList.remove('show');
@@ -251,25 +274,41 @@ function askConfirm(message,{title='확인',okText='확인',cancelText='취소',
       document.removeEventListener('keydown',onKey);
       resolve(v);
     }
-    function onOk(){done(true)}
+    function onOk(){
+      if(reason){
+        const value=reasonInput.value.trim();
+        if(reasonRequired&&!value){
+          reasonError.style.display='block';
+          reasonInput.focus();
+          return;
+        }
+        done(value||true);
+        return;
+      }
+      done(true);
+    }
     function onCancel(){done(false)}
     function onMask(e){if(e.target===mask)done(false)}
-    function onKey(e){if(e.key==='Escape')done(false); if(e.key==='Enter')done(true)}
+    function onKey(e){
+      if(e.key==='Escape')done(false);
+      if(e.key==='Enter'&&!reason)done(true);
+    }
     ok.addEventListener('click',onOk);
     cancel.addEventListener('click',onCancel);
     mask.addEventListener('click',onMask);
     document.addEventListener('keydown',onKey);
-    setTimeout(()=>cancel.focus(),0);
+    setTimeout(()=>reason?reasonInput.focus():cancel.focus(),0);
   });
 }
 
 function uid(p){return p+'_'+Math.random().toString(16).slice(2)+Date.now().toString(16)}
-function loadLocal(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved&&saved.orders) return saved;}catch(e){} return buildStateFromSeed();}
-function buildStateFromSeed(){const vendors=[...new Set(seedRows.map(r=>r.vendor).filter(Boolean))].map(v=>({id:uid('v'),vendor:v,code:'',memo:''}));const productMap=new Map();seedRows.forEach(r=>{const k=r.vendor+'||'+r.product;if(!productMap.has(k))productMap.set(k,{id:uid('p'),vendor:r.vendor,product:r.product,orderProduct:r.orderProduct||r.product,memo:''});});return{vendors,products:[...productMap.values()],orders:seedRows};}
+function loadLocal(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved&&saved.orders){saved.vendors=saved.vendors||[];saved.products=saved.products||[];saved.orders=saved.orders||[];saved.deletedOrders=saved.deletedOrders||[];return saved;}}catch(e){} return buildStateFromSeed();}
+function buildStateFromSeed(){const vendors=[...new Set(seedRows.map(r=>r.vendor).filter(Boolean))].map(v=>({id:uid('v'),vendor:v,code:'',memo:''}));const productMap=new Map();seedRows.forEach(r=>{const k=r.vendor+'||'+r.product;if(!productMap.has(k))productMap.set(k,{id:uid('p'),vendor:r.vendor,product:r.product,orderProduct:r.orderProduct||r.product,memo:''});});return{vendors,products:[...productMap.values()],orders:seedRows,deletedOrders:[]};}
 function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 function normalize(o){const ordered=Number(o.ordered||0),received=Number(o.received||0),outstanding=ordered-received;return{...o,ordered,received,outstanding,orderRound:o.orderRound||'',orderedAt:o.orderedAt||o.createdAt||'',status:outstanding===0?'입고완료':outstanding<0?'초과입고':'미송'};}
 function orders(){return (state.orders||[]).map(normalize).sort((a,b)=>String(a.vendor).localeCompare(String(b.vendor),'ko')||String(a.product).localeCompare(String(b.product),'ko')||String(a.color).localeCompare(String(b.color),'ko')||String(a.size).localeCompare(String(b.size),'ko')||String(a.orderedAt||a.createdAt).localeCompare(String(b.orderedAt||b.createdAt)));}
-function summary(){const os=orders();const totalOrdered=sum(os,'ordered'),totalReceived=sum(os,'received'),totalOutstanding=sum(os,'outstanding');return{totalOrdered,totalReceived,totalOutstanding,rate:totalOrdered?Math.round(totalReceived/totalOrdered*100):0,vendorCount:new Set(os.map(o=>o.vendor)).size,productCount:new Set(os.map(o=>o.vendor+'||'+o.product)).size,optionKindCount:new Set(os.map(o=>o.vendor+'||'+o.product+'||'+o.color+'||'+o.size)).size,orderLineCount:os.length,completeCount:os.filter(o=>o.status==='입고완료').length,pendingCount:os.filter(o=>o.outstanding>0).length,pendingVendorCount:new Set(os.filter(o=>o.outstanding>0).map(o=>o.vendor)).size};}
+function deletedOrders(){return (state.deletedOrders||[]).map(d=>({...d,ordered:Number(d.ordered||0),received:Number(d.received||0),outstanding:Number(d.outstanding||0)})).sort((a,b)=>String(b.deletedAt||'').localeCompare(String(a.deletedAt||'')));}
+function summary(){const os=orders();const totalOrdered=sum(os,'ordered'),totalReceived=sum(os,'received'),totalOutstanding=sum(os,'outstanding');return{totalOrdered,totalReceived,totalOutstanding,rate:totalOrdered?Math.round(totalReceived/totalOrdered*100):0,vendorCount:new Set(os.map(o=>o.vendor)).size,productCount:new Set(os.map(o=>o.vendor+'||'+o.product)).size,optionKindCount:new Set(os.map(o=>o.vendor+'||'+o.product+'||'+o.color+'||'+o.size)).size,orderLineCount:os.length,completeCount:os.filter(o=>o.status==='입고완료').length,pendingCount:os.filter(o=>o.outstanding>0).length,pendingVendorCount:new Set(os.filter(o=>o.outstanding>0).map(o=>o.vendor)).size,deletedCount:deletedOrders().length};}
 function sum(arr,key){return arr.reduce((a,b)=>a+Number(b[key]||0),0)}
 function pad2(n){return String(n).padStart(2,'0')}
 function nowLocalInput(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
@@ -279,13 +318,17 @@ function sameOption(o,data){return String(o.vendor).trim()===String(data.vendor)
 function nextOrderRoundLabel(data){const n=(state.orders||[]).filter(o=>sameOption(o,data)).length+1;return `${n}차 발주`}
 function showMsg(text,type='ok'){document.getElementById('message').innerHTML=`<div class="notice ${type}">${text}</div>`;setTimeout(()=>{document.getElementById('message').innerHTML=''},4200)}
 function renderNav(){document.getElementById('nav').innerHTML=navItems.map(([id,label])=>`<button type="button" class="${id===currentView?'active':''}" onclick="go('${id}')"><span>${label}</span><span class="badge">${navCount(id)}</span></button>`).join('')}
-function navCount(id){const s=summary();return id==='pending'?s.pendingCount:id==='complete'?s.completeCount:id==='master'?s.vendorCount:id==='inbound'?s.orderLineCount:''}
+function navCount(id){const s=summary();return id==='pending'?s.pendingCount:id==='complete'?s.completeCount:id==='deleted'?s.deletedCount:id==='master'?s.vendorCount:id==='inbound'?s.orderLineCount:''}
 function go(id){currentView=id;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');renderAll();}
 function setMode(){const connected=!!apiUrl;document.getElementById('modeBadge').className='mode '+(connected?'cloud':'local');document.getElementById('modeBadge').textContent=connected?'구글시트 저장':'로컬 임시저장';document.getElementById('sideMode').textContent=connected?'구글시트 연동 중':'이 PC 브라우저 임시저장';document.getElementById('apiUrl').value=apiUrl;}
 function renderCards(){const s=summary();const rows=[['총 발주',s.totalOrdered,'누적 발주수량'],['총 입고',s.totalReceived,`입고율 ${s.rate}%`],['총 미송',s.totalOutstanding,'발주-입고'],['미송업체',s.pendingVendorCount,'미송 남은 업체'],['발주건수',s.orderLineCount,'추가주문 포함'],['업체',s.vendorCount,'등록/사용 업체'],['상품종류',s.productCount,'업체+상품 고유'],['입고완료',s.completeCount,'미송 0']];document.getElementById('cards').innerHTML=rows.map(r=>`<div class="card"><div class="k">${r[0]}</div><div class="v">${r[1].toLocaleString()}</div><small>${r[2]}</small></div>`).join('')}
 function tableRows(list,{edit=false,actions=false}={}){if(!list.length)return'<div class="empty">표시할 데이터가 없습니다.</div>';return`<div class="table-wrap"><table><thead><tr><th>상태</th><th>차수</th><th>발주일시</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th>${actions?'<th></th>':''}</tr></thead><tbody>${list.map(o=>`<tr><td>${statusHtml(o)}</td><td><span class="round">${esc(o.orderRound||'')}</span></td><td><span class="dt">${fmtDateTime(o.orderedAt||o.createdAt)}</span></td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${edit?`<input class="qty" type="number" min="0" value="${o.received}" id="recv_${o.id}">`:o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td>${actions?`<td><div class="mini-actions">${edit?`<button type="button" class="btn-blue" onclick="saveReceived('${o.id}')">입고저장</button>`:''}<button type="button" class="btn-red" onclick="deleteOrder('${o.id}')">삭제</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
 function statusHtml(o){const cls=o.status==='입고완료'?'complete':o.status==='초과입고'?'over':'pending';return`<span class="status ${cls}">${o.status}</span>`}
 function esc(v){return String(v??'').replace(/[&<>"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]))}
+function deletedTableRows(list){
+  if(!list.length)return'<div class="empty">삭제내역이 없습니다.</div>';
+  return`<div class="table-wrap"><table><thead><tr><th>삭제일시</th><th>삭제사유</th><th>차수</th><th>발주일시</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th><th>원본ID</th></tr></thead><tbody>${list.map(o=>`<tr><td><span class="dt">${fmtDateTime(o.deletedAt)}</span></td><td>${esc(o.deletedReason||'')}</td><td><span class="round">${esc(o.orderRound||'')}</span></td><td><span class="dt">${fmtDateTime(o.orderedAt||o.createdAt)}</span></td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td><td>${esc(o.originalOrderId||'')}</td></tr>`).join('')}</tbody></table></div>`;
+}
 function renderDashboard(){renderCards();const os=orders();renderPendingVendorSelector('pendingVendorSummary');const detail=pendingBySelectedVendor(os).slice(0,12);const title=selectedPendingVendor?`${selectedPendingVendor} 미송 상세 ${detail.length}건`:`전체 미송 상세 ${os.filter(o=>o.outstanding>0).length}건`;document.getElementById('pendingTop').innerHTML=`<div class="pill">${esc(title)} · 업체별로 보려면 위 업체 카드를 누르세요. 잘못 등록한 발주건은 오른쪽 삭제 버튼으로 삭제할 수 있습니다.</div><div style="height:8px"></div>`+tableRows(detail,{edit:false,actions:true});document.getElementById('vendorSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor));document.getElementById('productSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor+' / '+o.product));}
 function groupBy(list,fn){const m=new Map();list.forEach(o=>{const k=fn(o);if(!m.has(k))m.set(k,[]);m.get(k).push(o)});return [...m.entries()].map(([name,rows])=>({name,ordered:sum(rows,'ordered'),received:sum(rows,'received'),outstanding:sum(rows,'outstanding'),count:rows.length})).sort((a,b)=>b.outstanding-a.outstanding).slice(0,20)}
 function summaryTable(list){if(!list.length)return'<div class="empty">데이터 없음</div>';return`<div class="table-wrap" style="max-height:420px"><table style="min-width:520px"><thead><tr><th>구분</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th></tr></thead><tbody>${list.map(x=>`<tr><td>${esc(x.name)}</td><td class="num">${x.ordered}</td><td class="num">${x.received}</td><td class="num"><b>${x.outstanding}</b></td></tr>`).join('')}</tbody></table></div>`}
@@ -293,7 +336,9 @@ function pendingVendorGroups(){return groupBy(orders().filter(o=>o.outstanding>0
 function pendingBySelectedVendor(os=orders()){let list=os.filter(o=>o.outstanding>0);if(selectedPendingVendor)list=list.filter(o=>o.vendor===selectedPendingVendor);return list;}
 function selectPendingVendor(v){selectedPendingVendor=v||'';renderAll();if(currentView==='dashboard'||currentView==='pending')document.getElementById(currentView)?.scrollIntoView({block:'start'});}
 function renderPendingVendorSelector(targetId){const el=document.getElementById(targetId);if(!el)return;const groups=pendingVendorGroups();const total=orders().filter(o=>o.outstanding>0);const totalMiss=sum(total,'outstanding');if(!groups.length){el.innerHTML='<div class="empty">미송 업체가 없습니다.</div>';return;}el.innerHTML=`<div class="vendor-grid"><button type="button" class="vendor-card ${selectedPendingVendor?'':'active'}" onclick="selectPendingVendor('')"><span class="name">전체 업체</span><span class="meta"><span>${total.length}건</span><span class="miss">미송 ${totalMiss}</span></span></button>${groups.map(g=>`<button type="button" class="vendor-card ${selectedPendingVendor===g.name?'active':''}" onclick="selectPendingVendor(decodeURIComponent('${encodeURIComponent(g.name)}'))"><span class="name">${esc(g.name)}</span><span class="meta"><span>${g.count||0}건</span><span class="miss">미송 ${g.outstanding}</span></span></button>`).join('')}</div>`;}
-function renderLists(){const os=orders();document.getElementById('inboundTable').innerHTML=filterToolbar('inbound')+tableRows(applyFilter(os,'inbound'),{edit:true,actions:true});renderPendingVendorSelector('pendingVendorTabs');document.getElementById('pendingTable').innerHTML=filterToolbar('pending')+tableRows(applyFilter(pendingBySelectedVendor(os),'pending'),{edit:true,actions:true});document.getElementById('completeTable').innerHTML=filterToolbar('complete')+tableRows(applyFilter(os.filter(o=>o.status==='입고완료'),'complete'),{edit:false,actions:true});}
+function renderLists(){const os=orders();document.getElementById('inboundTable').innerHTML=filterToolbar('inbound')+tableRows(applyFilter(os,'inbound'),{edit:true,actions:true});renderPendingVendorSelector('pendingVendorTabs');document.getElementById('pendingTable').innerHTML=filterToolbar('pending')+tableRows(applyFilter(pendingBySelectedVendor(os),'pending'),{edit:true,actions:true});document.getElementById('completeTable').innerHTML=filterToolbar('complete')+tableRows(applyFilter(os.filter(o=>o.status==='입고완료'),'complete'),{edit:false,actions:true});document.getElementById('deletedTable').innerHTML=deletedFilterToolbar()+deletedTableRows(applyDeletedFilter(deletedOrders()));}
+function deletedFilterToolbar(){return`<div class="toolbar"><input id="q_deleted" placeholder="업체/상품/컬러/삭제사유 검색" oninput="renderLists()" value="${esc(document.getElementById('q_deleted')?.value||'')}"><input id="fv_deleted" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_deleted')?.value||'')}"><input id="fp_deleted" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_deleted')?.value||'')}"><span></span><button type="button" onclick="downloadCsv('deleted')">삭제내역 내려받기</button><button type="button" onclick="refreshData()">새로고침</button></div>`}
+function applyDeletedFilter(list){const q=(document.getElementById('q_deleted')?.value||'').toLowerCase();const v=document.getElementById('fv_deleted')?.value||'';const p=document.getElementById('fp_deleted')?.value||'';return list.filter(o=>(!q||[o.vendor,o.product,o.orderProduct,o.color,o.size,o.deletedReason,o.note].some(x=>String(x||'').toLowerCase().includes(q)))&&(!v||o.vendor===v)&&(!p||o.product===p));}
 function filterToolbar(id){return`<div class="toolbar"><input id="q_${id}" placeholder="업체/상품/컬러 검색" oninput="renderLists()" value="${esc(document.getElementById('q_'+id)?.value||'')}"><input id="fv_${id}" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_'+id)?.value||'')}"><input id="fp_${id}" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_'+id)?.value||'')}"><select id="fs_${id}" onchange="renderLists()"><option value="">상태 전체</option><option>미송</option><option>입고완료</option><option>초과입고</option></select><button type="button" onclick="downloadCsv('${id==='pending'?'pending':id==='complete'?'complete':'all'}')">내려받기</button><button type="button" onclick="refreshData()">새로고침</button></div>`}
 function applyFilter(list,id){const q=(document.getElementById('q_'+id)?.value||'').trim().toLowerCase();const v=(document.getElementById('fv_'+id)?.value||'').trim();const p=(document.getElementById('fp_'+id)?.value||'').trim();const s=document.getElementById('fs_'+id)?.value||'';return list.filter(o=>(!q||[o.vendor,o.product,o.orderProduct,o.color,o.size,o.orderRound,fmtDateTime(o.orderedAt),o.note].join(' ').toLowerCase().includes(q))&&(!v||o.vendor.includes(v))&&(!p||o.product.includes(p))&&(!s||o.status===s));}
 function renderDatalists(){const vendors=[...new Set([...(state.vendors||[]).map(v=>v.vendor),...orders().map(o=>o.vendor)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));const products=[...new Set([...(state.products||[]).map(p=>p.product),...orders().map(o=>o.product)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));document.getElementById('vendorList').innerHTML=vendors.map(v=>`<option value="${esc(v)}"></option>`).join('');document.getElementById('productList').innerHTML=products.map(p=>`<option value="${esc(p)}"></option>`).join('');}
@@ -336,13 +381,14 @@ ${received}장 입고가 맞습니까?`;
 async function deleteOrder(id){
   const order=orders().find(o=>String(o.id)===String(id));
   const label=order?`${order.vendor} / ${order.product} / ${order.color} / ${order.size} / ${order.orderRound||''}`:'이 발주건';
-  if(!(await askConfirm(`${label}
+  const reason=await askConfirm(`${label}
 
-잘못 주문한 발주건을 삭제할까요?
-삭제하면 구글시트에서도 해당 행이 삭제됩니다.`,{title:'발주건 삭제 확인',okText:'삭제',cancelText:'취소',danger:true})))return;
+잘못 주문한 발주건을 삭제하려면 삭제사유를 입력하세요.
+삭제 후에는 구글시트의 삭제내역에 히스토리가 남고, 발주입고내역에서는 제거됩니다.`,{title:'발주건 삭제 확인',okText:'사유 입력 후 삭제',cancelText:'취소',danger:true,reason:true,reasonRequired:true,reasonLabel:'삭제사유 필수 입력'});
+  if(!reason)return;
   try{
-    await mutate('deleteOrder',{id});
-    showMsg('발주건을 삭제했습니다.');
+    await mutate('deleteOrder',{id,reason});
+    showMsg('발주건을 삭제하고 삭제내역에 기록했습니다.');
   }catch(e){
     showMsg('삭제 실패: '+e.message,'danger');
   }
@@ -357,10 +403,10 @@ async function mutate(action,data){
     localMutate(action,data);saveLocal();renderAll();
   }
 }
-function localMutate(action,data){const now=new Date().toISOString();if(action==='saveVendor'){const ex=state.vendors.find(v=>v.vendor===data.vendor);ex?Object.assign(ex,data,{updatedAt:now}):state.vendors.push({id:uid('v'),createdAt:now,updatedAt:now,...data});} if(action==='saveProduct'){if(!state.vendors.find(v=>v.vendor===data.vendor))state.vendors.push({id:uid('v'),vendor:data.vendor});const ex=state.products.find(p=>p.vendor===data.vendor&&p.product===data.product);ex?Object.assign(ex,data,{updatedAt:now}):state.products.push({id:uid('p'),createdAt:now,updatedAt:now,...data});} if(action==='saveOrder'){localMutate('saveProduct',{vendor:data.vendor,product:data.product,orderProduct:data.orderProduct});data.orderedAt=data.orderedAt||now;data.orderRound=data.orderRound||nextOrderRoundLabel(data); if(data.id){const ex=state.orders.find(o=>o.id===data.id); ex?Object.assign(ex,data,{updatedAt:now}):state.orders.push({id:data.id,createdAt:now,updatedAt:now,...data});} else {state.orders.push({id:uid('o'),createdAt:now,updatedAt:now,...data});}} if(action==='updateReceived'){const ex=state.orders.find(o=>o.id===data.id);if(ex)Object.assign(ex,{received:data.received,note:data.note??ex.note,updatedAt:now});} if(action==='deleteOrder'){state.orders=state.orders.filter(o=>o.id!==data.id);} if(action==='initSeed'){data.rows.forEach(r=>localMutate('saveOrder',r));}}
+function localMutate(action,data){const now=new Date().toISOString();if(action==='saveVendor'){const ex=state.vendors.find(v=>v.vendor===data.vendor);ex?Object.assign(ex,data,{updatedAt:now}):state.vendors.push({id:uid('v'),createdAt:now,updatedAt:now,...data});} if(action==='saveProduct'){if(!state.vendors.find(v=>v.vendor===data.vendor))state.vendors.push({id:uid('v'),vendor:data.vendor});const ex=state.products.find(p=>p.vendor===data.vendor&&p.product===data.product);ex?Object.assign(ex,data,{updatedAt:now}):state.products.push({id:uid('p'),createdAt:now,updatedAt:now,...data});} if(action==='saveOrder'){localMutate('saveProduct',{vendor:data.vendor,product:data.product,orderProduct:data.orderProduct});data.orderedAt=data.orderedAt||now;data.orderRound=data.orderRound||nextOrderRoundLabel(data); if(data.id){const ex=state.orders.find(o=>o.id===data.id); ex?Object.assign(ex,data,{updatedAt:now}):state.orders.push({id:data.id,createdAt:now,updatedAt:now,...data});} else {state.orders.push({id:uid('o'),createdAt:now,updatedAt:now,...data});}} if(action==='updateReceived'){const ex=state.orders.find(o=>o.id===data.id);if(ex)Object.assign(ex,{received:data.received,note:data.note??ex.note,updatedAt:now});} if(action==='deleteOrder'){const ex=state.orders.find(o=>o.id===data.id);if(ex){state.deletedOrders=state.deletedOrders||[];state.deletedOrders.unshift({id:uid('d'),deletedAt:now,deletedReason:data.reason||'',originalOrderId:ex.id,...normalize(ex)});}state.orders=state.orders.filter(o=>o.id!==data.id);} if(action==='initSeed'){data.rows.forEach(r=>localMutate('saveOrder',r));}}
 function saveApiUrl(){apiUrl=val('apiUrl');localStorage.setItem(API_KEY,apiUrl);setMode();showMsg('연동 URL을 저장했습니다. 구글시트 새로고침을 눌러주세요.');}
 async function testApi(){try{if(!apiUrl)saveApiUrl();const res=await jsonp(apiUrl,{action:'ping'});showMsg('연결 성공: '+(res.message||'정상'));}catch(e){showMsg('연결 실패: '+e.message,'danger');}}
-async function refreshData(show=true){if(!apiUrl){renderAll();if(show)showMsg('아직 구글시트 웹 앱 주소가 없습니다. 현재는 로컬 임시저장입니다.','danger');return;}try{const res=await jsonp(apiUrl,{action:'list'});if(!res.ok)throw new Error(res.error||'불러오기 실패');state={vendors:res.data.vendors||[],products:res.data.products||[],orders:res.data.orders||[]};saveLocal();renderAll();if(show)showMsg('구글시트 데이터를 불러왔습니다.');}catch(e){showMsg('구글시트 새로고침 실패: '+e.message,'danger');}}
+async function refreshData(show=true){if(!apiUrl){renderAll();if(show)showMsg('아직 구글시트 웹 앱 주소가 없습니다. 현재는 로컬 임시저장입니다.','danger');return;}try{const res=await jsonp(apiUrl,{action:'list'});if(!res.ok)throw new Error(res.error||'불러오기 실패');state={vendors:res.data.vendors||[],products:res.data.products||[],orders:res.data.orders||[],deletedOrders:res.data.deletedOrders||[]};saveLocal();renderAll();if(show)showMsg('구글시트 데이터를 불러왔습니다.');}catch(e){showMsg('구글시트 새로고침 실패: '+e.message,'danger');}}
 async function seedToCloud(){if(!apiUrl){go('settings');return showMsg('먼저 구글 앱스 스크립트 주소를 저장해야 합니다.','danger')}if(!(await askConfirm('기존 엑셀 데이터 45개 옵션을 구글시트에 업로드할까요? 이미 있는 동일 옵션은 중복 저장하지 않습니다.',{title:'기존 데이터 업로드 확인',okText:'업로드',cancelText:'취소'})))return;await postApi({action:'initSeed',data:{rows:seedRows}});await refreshData(false);showMsg('기존 엑셀 데이터를 구글시트에 업로드했습니다.');}
 function apiMutate(action,data){
   // 일반 저장/수정/삭제는 JSONP GET으로 처리합니다. GitHub Pages에서 Apps Script POST/iframe이 막히는 경우가 있어 삭제가 안 되는 문제를 방지합니다.
@@ -370,7 +416,16 @@ function apiMutate(action,data){
 }
 function postApi(payload){return new Promise((resolve,reject)=>{if(!apiUrl)return reject(new Error('연동 주소 없음'));const iframe=document.createElement('iframe');iframe.name='post_iframe_'+Date.now();iframe.style.display='none';const form=document.createElement('form');form.method='POST';form.action=apiUrl;form.target=iframe.name;form.enctype='application/x-www-form-urlencoded';form.style.display='none';const input=document.createElement('input');input.name='payload';input.value=JSON.stringify(payload);form.appendChild(input);let done=false;const timer=setTimeout(()=>{if(!done){cleanup();reject(new Error('저장 응답 시간 초과'))}},20000);function cleanup(){done=true;clearTimeout(timer);setTimeout(()=>{iframe.remove();form.remove()},100)}iframe.onload=()=>{if(!done){cleanup();resolve({ok:true})}};document.body.appendChild(iframe);document.body.appendChild(form);form.submit();});}
 function jsonp(url,params={}){return new Promise((resolve,reject)=>{const cb='jsonp_'+Date.now()+'_'+Math.random().toString(16).slice(2);const u=new URL(url);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));u.searchParams.set('callback',cb);const script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('연결 시간 초과'))},15000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=(data)=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(new Error('스크립트 호출 실패'))};script.src=u.toString();document.body.appendChild(script);});}
-function downloadCsv(type){let list=orders();if(type==='pending')list=list.filter(o=>o.outstanding>0);if(type==='complete')list=list.filter(o=>o.status==='입고완료');const headers=['id','발주차수','발주일시','업체','상품명','주문상품명','컬러','사이즈','발주수량','입고수량','미송수량','상태','메모','등록일','수정일'];const rows=list.map(o=>[o.id,o.orderRound||'',fmtDateTime(o.orderedAt||o.createdAt),o.vendor,o.product,o.orderProduct,o.color,o.size,o.ordered,o.received,o.outstanding,o.status,o.note||'',o.createdAt||'',o.updatedAt||'']);const csv='\ufeff'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dongdaemun_${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);}
+function downloadCsv(type){
+  if(type==='deleted'){
+    const list=deletedOrders();
+    const headers=['삭제ID','삭제일시','삭제사유','원본주문ID','발주차수','발주일시','업체','상품명','주문상품명','컬러','사이즈','발주수량','입고수량','미송수량','상태','메모','등록일','수정일'];
+    const rows=list.map(o=>[o.id,o.deletedAt||'',o.deletedReason||'',o.originalOrderId||'',o.orderRound||'',fmtDateTime(o.orderedAt||o.createdAt),o.vendor,o.product,o.orderProduct,o.color,o.size,o.ordered,o.received,o.outstanding,o.status||'',o.note||'',o.createdAt||'',o.updatedAt||'']);
+    const csv='\ufeff'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dongdaemun_deleted_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);return;
+  }
+  let list=orders();if(type==='pending')list=list.filter(o=>o.outstanding>0);if(type==='complete')list=list.filter(o=>o.status==='입고완료');const headers=['id','발주차수','발주일시','업체','상품명','주문상품명','컬러','사이즈','발주수량','입고수량','미송수량','상태','메모','등록일','수정일'];const rows=list.map(o=>[o.id,o.orderRound||'',fmtDateTime(o.orderedAt||o.createdAt),o.vendor,o.product,o.orderProduct,o.color,o.size,o.ordered,o.received,o.outstanding,o.status,o.note||'',o.createdAt||'',o.updatedAt||'']);const csv='\ufeff'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dongdaemun_${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);
+}
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
 async function clearLocalOnly(){if(await askConfirm('이 PC 브라우저의 임시 저장값만 삭제합니다. 구글시트 데이터는 삭제되지 않습니다.',{title:'로컬 임시데이터 삭제',okText:'삭제',cancelText:'취소',danger:true})){localStorage.removeItem(STORAGE_KEY);state=buildStateFromSeed();renderAll();showMsg('로컬 임시데이터를 초기화했습니다.')}}
 function renderAll(){setMode();setDefaultOrderDate();renderNav();renderDatalists();renderDashboard();renderLists();renderMaster();renderExistingOptions();}
