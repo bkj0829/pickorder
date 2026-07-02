@@ -78,6 +78,13 @@
     .status.pending{background:#fee2e2;color:#dc2626}.status.complete{background:#dcfce7;color:#15803d}.status.over{background:#fef3c7;color:#b45309}
     .qty{width:66px;min-height:28px;text-align:right;border-radius:7px;padding:0 6px}
     .pill{display:inline-flex;gap:5px;align-items:center;padding:4px 8px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-weight:850;font-size:11px}
+    .vendor-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:8px}
+    .vendor-card{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 9px;text-align:left;min-height:56px;box-shadow:none}
+    .vendor-card:hover{border-color:#bfdbfe;background:#eff6ff}
+    .vendor-card.active{border-color:#2563eb;background:#eff6ff;box-shadow:inset 0 0 0 1px #2563eb}
+    .vendor-card .name{display:block;font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
+    .vendor-card .meta{display:flex;justify-content:space-between;gap:6px;color:#64748b;font-size:10.5px;font-weight:800}
+    .vendor-card .miss{color:#dc2626;font-weight:950}
     .round{display:inline-flex;justify-content:center;min-width:58px;border-radius:999px;padding:3px 7px;background:#eef2ff;color:#1d4ed8;font-weight:950;font-size:11px}
     .dt{color:#475569;font-variant-numeric:tabular-nums;font-size:11.5px}
     .notice{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:10px;padding:9px 10px;font-weight:800;margin-bottom:8px;font-size:12px}
@@ -88,8 +95,8 @@
     .api-row{display:grid;grid-template-columns:1fr auto auto;gap:6px}
     .hidden{display:none!important}
 
-    @media(max-width:1300px){.cards{grid-template-columns:repeat(4,1fr)}.app{grid-template-columns:170px minmax(0,1fr)}}
-    @media(max-width:900px){.app{display:block}.side{position:relative;height:auto}.cards{grid-template-columns:repeat(2,1fr)}.toolbar,.grid.cols-6,.grid.cols-4,.grid.cols-3,.grid.cols-2,.api-row{grid-template-columns:1fr}.top{display:block}.actions{justify-content:flex-start;margin-top:8px}main{padding:12px}h1{font-size:22px}}
+    @media(max-width:1300px){.cards{grid-template-columns:repeat(4,1fr)}.vendor-grid{grid-template-columns:repeat(3,1fr)}.app{grid-template-columns:170px minmax(0,1fr)}}
+    @media(max-width:900px){.app{display:block}.side{position:relative;height:auto}.cards,.vendor-grid{grid-template-columns:repeat(2,1fr)}.toolbar,.grid.cols-6,.grid.cols-4,.grid.cols-3,.grid.cols-2,.api-row{grid-template-columns:1fr}.top{display:block}.actions{justify-content:flex-start;margin-top:8px}main{padding:12px}h1{font-size:22px}}
   </style>
 </head>
 <body>
@@ -120,8 +127,8 @@
     <section id="dashboard" class="section active">
       <div class="cards" id="cards"></div>
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">미송 우선 확인</div><div class="panel-sub">발주수량 - 입고수량 기준으로 아직 남은 품목입니다.</div></div><button onclick="downloadCsv('pending')">미송 내려받기</button></div>
-        <div class="panel-body"><div id="pendingTop"></div></div>
+        <div class="panel-head"><div><div class="panel-title">업체별 미송 확인</div><div class="panel-sub">미송은 업체별로 먼저 보고, 업체를 누르면 해당 업체 미송 발주건만 확인합니다.</div></div><button onclick="downloadCsv('pending')">미송 전체 내려받기</button></div>
+        <div class="panel-body"><div id="pendingVendorSummary"></div><div id="pendingTop"></div></div>
       </div>
       <div class="grid cols-2">
         <div class="panel"><div class="panel-head"><div><div class="panel-title">업체별 토탈</div><div class="panel-sub">업체별 발주/입고/미송 합계</div></div></div><div class="panel-body"><div id="vendorSummary"></div></div></div>
@@ -153,13 +160,13 @@
 
     <section id="inbound" class="section">
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">입고 처리</div><div class="panel-sub">입고수량을 수정하면 미송과 입고완료가 자동 계산됩니다.</div></div><button onclick="downloadCsv('all')">내려받기</button></div>
+        <div class="panel-head"><div><div class="panel-title">입고 처리</div><div class="panel-sub">입고수량 입력 후 저장하면 확인창으로 한 번 더 체크합니다.</div></div><button onclick="downloadCsv('all')">내려받기</button></div>
         <div class="panel-body"><div id="inboundTable"></div></div>
       </div>
     </section>
 
     <section id="pending" class="section">
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">미송 목록</div><div class="panel-sub">입고가 덜 된 품목만 표시합니다.</div></div><button onclick="downloadCsv('pending')">미송 내려받기</button></div><div class="panel-body"><div id="pendingTable"></div></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">업체별 미송 목록</div><div class="panel-sub">업체를 선택하면 그 업체의 미송 발주건만 표시합니다.</div></div><button onclick="downloadCsv('pending')">미송 전체 내려받기</button></div><div class="panel-body"><div id="pendingVendorTabs"></div><div id="pendingTable"></div></div></div>
     </section>
 
     <section id="complete" class="section">
@@ -200,7 +207,8 @@ const seedRows=(window.ORDER_INBOUND_DATA?.rows||[]).map((r,i)=>({id:r.id||uid('
 let apiUrl=localStorage.getItem(API_KEY)||'';
 let state=loadLocal();
 let currentView='dashboard';
-const navItems=[['dashboard','대시보드'],['register','주문상품 등록'],['inbound','입고 처리'],['pending','미송 목록'],['complete','입고완료'],['master','마스터 등록'],['settings','연동 설정']];
+let selectedPendingVendor='';
+const navItems=[['dashboard','대시보드'],['register','주문상품 등록'],['inbound','입고 처리'],['pending','업체별 미송'],['complete','입고완료'],['master','마스터 등록'],['settings','연동 설정']];
 
 function uid(p){return p+'_'+Math.random().toString(16).slice(2)+Date.now().toString(16)}
 function loadLocal(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved&&saved.orders) return saved;}catch(e){} return buildStateFromSeed();}
@@ -208,7 +216,7 @@ function buildStateFromSeed(){const vendors=[...new Set(seedRows.map(r=>r.vendor
 function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 function normalize(o){const ordered=Number(o.ordered||0),received=Number(o.received||0),outstanding=ordered-received;return{...o,ordered,received,outstanding,orderRound:o.orderRound||'',orderedAt:o.orderedAt||o.createdAt||'',status:outstanding===0?'입고완료':outstanding<0?'초과입고':'미송'};}
 function orders(){return (state.orders||[]).map(normalize).sort((a,b)=>String(a.vendor).localeCompare(String(b.vendor),'ko')||String(a.product).localeCompare(String(b.product),'ko')||String(a.color).localeCompare(String(b.color),'ko')||String(a.size).localeCompare(String(b.size),'ko')||String(a.orderedAt||a.createdAt).localeCompare(String(b.orderedAt||b.createdAt)));}
-function summary(){const os=orders();const totalOrdered=sum(os,'ordered'),totalReceived=sum(os,'received'),totalOutstanding=sum(os,'outstanding');return{totalOrdered,totalReceived,totalOutstanding,rate:totalOrdered?Math.round(totalReceived/totalOrdered*100):0,vendorCount:new Set(os.map(o=>o.vendor)).size,productCount:new Set(os.map(o=>o.vendor+'||'+o.product)).size,optionKindCount:new Set(os.map(o=>o.vendor+'||'+o.product+'||'+o.color+'||'+o.size)).size,orderLineCount:os.length,completeCount:os.filter(o=>o.status==='입고완료').length,pendingCount:os.filter(o=>o.outstanding>0).length};}
+function summary(){const os=orders();const totalOrdered=sum(os,'ordered'),totalReceived=sum(os,'received'),totalOutstanding=sum(os,'outstanding');return{totalOrdered,totalReceived,totalOutstanding,rate:totalOrdered?Math.round(totalReceived/totalOrdered*100):0,vendorCount:new Set(os.map(o=>o.vendor)).size,productCount:new Set(os.map(o=>o.vendor+'||'+o.product)).size,optionKindCount:new Set(os.map(o=>o.vendor+'||'+o.product+'||'+o.color+'||'+o.size)).size,orderLineCount:os.length,completeCount:os.filter(o=>o.status==='입고완료').length,pendingCount:os.filter(o=>o.outstanding>0).length,pendingVendorCount:new Set(os.filter(o=>o.outstanding>0).map(o=>o.vendor)).size};}
 function sum(arr,key){return arr.reduce((a,b)=>a+Number(b[key]||0),0)}
 function pad2(n){return String(n).padStart(2,'0')}
 function nowLocalInput(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
@@ -221,14 +229,18 @@ function renderNav(){document.getElementById('nav').innerHTML=navItems.map(([id,
 function navCount(id){const s=summary();return id==='pending'?s.pendingCount:id==='complete'?s.completeCount:id==='master'?s.vendorCount:id==='inbound'?s.orderLineCount:''}
 function go(id){currentView=id;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');renderAll();}
 function setMode(){const connected=!!apiUrl;document.getElementById('modeBadge').className='mode '+(connected?'cloud':'local');document.getElementById('modeBadge').textContent=connected?'구글시트 저장':'로컬 임시저장';document.getElementById('sideMode').textContent=connected?'구글시트 연동 중':'이 PC 브라우저 임시저장';document.getElementById('apiUrl').value=apiUrl;}
-function renderCards(){const s=summary();const rows=[['총 발주',s.totalOrdered,'누적 발주수량'],['총 입고',s.totalReceived,`입고율 ${s.rate}%`],['총 미송',s.totalOutstanding,'발주-입고'],['발주건수',s.orderLineCount,'추가주문 포함'],['업체',s.vendorCount,'등록/사용 업체'],['상품종류',s.productCount,'업체+상품 고유'],['옵션종류',s.optionKindCount,'컬러/사이즈 고유'],['입고완료',s.completeCount,'미송 0']];document.getElementById('cards').innerHTML=rows.map(r=>`<div class="card"><div class="k">${r[0]}</div><div class="v">${r[1].toLocaleString()}</div><small>${r[2]}</small></div>`).join('')}
-function tableRows(list,{edit=false,actions=false}={}){if(!list.length)return'<div class="empty">표시할 데이터가 없습니다.</div>';return`<div class="table-wrap"><table><thead><tr><th>상태</th><th>차수</th><th>발주일시</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th>${actions?'<th></th>':''}</tr></thead><tbody>${list.map(o=>`<tr><td>${statusHtml(o)}</td><td><span class="round">${esc(o.orderRound||'')}</span></td><td><span class="dt">${fmtDateTime(o.orderedAt||o.createdAt)}</span></td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${edit?`<input class="qty" type="number" min="0" value="${o.received}" id="recv_${o.id}">`:o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td>${actions?`<td><div class="mini-actions">${edit?`<button class="btn-blue" onclick="saveReceived('${o.id}')">저장</button><button onclick="plusOne('${o.id}')">+1</button>`:''}<button class="btn-red" onclick="deleteOrder('${o.id}')">삭제</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
+function renderCards(){const s=summary();const rows=[['총 발주',s.totalOrdered,'누적 발주수량'],['총 입고',s.totalReceived,`입고율 ${s.rate}%`],['총 미송',s.totalOutstanding,'발주-입고'],['미송업체',s.pendingVendorCount,'미송 남은 업체'],['발주건수',s.orderLineCount,'추가주문 포함'],['업체',s.vendorCount,'등록/사용 업체'],['상품종류',s.productCount,'업체+상품 고유'],['입고완료',s.completeCount,'미송 0']];document.getElementById('cards').innerHTML=rows.map(r=>`<div class="card"><div class="k">${r[0]}</div><div class="v">${r[1].toLocaleString()}</div><small>${r[2]}</small></div>`).join('')}
+function tableRows(list,{edit=false,actions=false}={}){if(!list.length)return'<div class="empty">표시할 데이터가 없습니다.</div>';return`<div class="table-wrap"><table><thead><tr><th>상태</th><th>차수</th><th>발주일시</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th>${actions?'<th></th>':''}</tr></thead><tbody>${list.map(o=>`<tr><td>${statusHtml(o)}</td><td><span class="round">${esc(o.orderRound||'')}</span></td><td><span class="dt">${fmtDateTime(o.orderedAt||o.createdAt)}</span></td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${edit?`<input class="qty" type="number" min="0" value="${o.received}" id="recv_${o.id}">`:o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td>${actions?`<td><div class="mini-actions">${edit?`<button class="btn-blue" onclick="saveReceived('${o.id}')">입고저장</button>`:''}<button class="btn-red" onclick="deleteOrder('${o.id}')">삭제</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
 function statusHtml(o){const cls=o.status==='입고완료'?'complete':o.status==='초과입고'?'over':'pending';return`<span class="status ${cls}">${o.status}</span>`}
 function esc(v){return String(v??'').replace(/[&<>"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]))}
-function renderDashboard(){renderCards();const os=orders();document.getElementById('pendingTop').innerHTML=tableRows(os.filter(o=>o.outstanding>0).slice(0,12));document.getElementById('vendorSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor));document.getElementById('productSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor+' / '+o.product));}
-function groupBy(list,fn){const m=new Map();list.forEach(o=>{const k=fn(o);if(!m.has(k))m.set(k,[]);m.get(k).push(o)});return [...m.entries()].map(([name,rows])=>({name,ordered:sum(rows,'ordered'),received:sum(rows,'received'),outstanding:sum(rows,'outstanding')})).sort((a,b)=>b.outstanding-a.outstanding).slice(0,20)}
+function renderDashboard(){renderCards();const os=orders();renderPendingVendorSelector('pendingVendorSummary');const detail=pendingBySelectedVendor(os).slice(0,12);const title=selectedPendingVendor?`${selectedPendingVendor} 미송 상세 ${detail.length}건`:`전체 미송 상세 ${os.filter(o=>o.outstanding>0).length}건`;document.getElementById('pendingTop').innerHTML=`<div class="pill">${esc(title)} · 업체별로 보려면 위 업체 카드를 누르세요.</div><div style="height:8px"></div>`+tableRows(detail);document.getElementById('vendorSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor));document.getElementById('productSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor+' / '+o.product));}
+function groupBy(list,fn){const m=new Map();list.forEach(o=>{const k=fn(o);if(!m.has(k))m.set(k,[]);m.get(k).push(o)});return [...m.entries()].map(([name,rows])=>({name,ordered:sum(rows,'ordered'),received:sum(rows,'received'),outstanding:sum(rows,'outstanding'),count:rows.length})).sort((a,b)=>b.outstanding-a.outstanding).slice(0,20)}
 function summaryTable(list){if(!list.length)return'<div class="empty">데이터 없음</div>';return`<div class="table-wrap" style="max-height:420px"><table style="min-width:520px"><thead><tr><th>구분</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th></tr></thead><tbody>${list.map(x=>`<tr><td>${esc(x.name)}</td><td class="num">${x.ordered}</td><td class="num">${x.received}</td><td class="num"><b>${x.outstanding}</b></td></tr>`).join('')}</tbody></table></div>`}
-function renderLists(){const os=orders();document.getElementById('inboundTable').innerHTML=filterToolbar('inbound')+tableRows(applyFilter(os,'inbound'),{edit:true,actions:true});document.getElementById('pendingTable').innerHTML=filterToolbar('pending')+tableRows(applyFilter(os.filter(o=>o.outstanding>0),'pending'),{edit:true,actions:true});document.getElementById('completeTable').innerHTML=filterToolbar('complete')+tableRows(applyFilter(os.filter(o=>o.status==='입고완료'),'complete'),{edit:false,actions:true});}
+function pendingVendorGroups(){return groupBy(orders().filter(o=>o.outstanding>0),o=>o.vendor)}
+function pendingBySelectedVendor(os=orders()){let list=os.filter(o=>o.outstanding>0);if(selectedPendingVendor)list=list.filter(o=>o.vendor===selectedPendingVendor);return list;}
+function selectPendingVendor(v){selectedPendingVendor=v||'';renderAll();if(currentView==='dashboard'||currentView==='pending')document.getElementById(currentView)?.scrollIntoView({block:'start'});}
+function renderPendingVendorSelector(targetId){const el=document.getElementById(targetId);if(!el)return;const groups=pendingVendorGroups();const total=orders().filter(o=>o.outstanding>0);const totalMiss=sum(total,'outstanding');if(!groups.length){el.innerHTML='<div class="empty">미송 업체가 없습니다.</div>';return;}el.innerHTML=`<div class="vendor-grid"><button class="vendor-card ${selectedPendingVendor?'':'active'}" onclick="selectPendingVendor('')"><span class="name">전체 업체</span><span class="meta"><span>${total.length}건</span><span class="miss">미송 ${totalMiss}</span></span></button>${groups.map(g=>`<button class="vendor-card ${selectedPendingVendor===g.name?'active':''}" onclick="selectPendingVendor(decodeURIComponent('${encodeURIComponent(g.name)}'))"><span class="name">${esc(g.name)}</span><span class="meta"><span>${g.count||0}건</span><span class="miss">미송 ${g.outstanding}</span></span></button>`).join('')}</div>`;}
+function renderLists(){const os=orders();document.getElementById('inboundTable').innerHTML=filterToolbar('inbound')+tableRows(applyFilter(os,'inbound'),{edit:true,actions:true});renderPendingVendorSelector('pendingVendorTabs');document.getElementById('pendingTable').innerHTML=filterToolbar('pending')+tableRows(applyFilter(pendingBySelectedVendor(os),'pending'),{edit:true,actions:true});document.getElementById('completeTable').innerHTML=filterToolbar('complete')+tableRows(applyFilter(os.filter(o=>o.status==='입고완료'),'complete'),{edit:false,actions:true});}
 function filterToolbar(id){return`<div class="toolbar"><input id="q_${id}" placeholder="업체/상품/컬러 검색" oninput="renderLists()" value="${esc(document.getElementById('q_'+id)?.value||'')}"><input id="fv_${id}" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_'+id)?.value||'')}"><input id="fp_${id}" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_'+id)?.value||'')}"><select id="fs_${id}" onchange="renderLists()"><option value="">상태 전체</option><option>미송</option><option>입고완료</option><option>초과입고</option></select><button onclick="downloadCsv('${id==='pending'?'pending':id==='complete'?'complete':'all'}')">내려받기</button><button onclick="refreshData()">새로고침</button></div>`}
 function applyFilter(list,id){const q=(document.getElementById('q_'+id)?.value||'').trim().toLowerCase();const v=(document.getElementById('fv_'+id)?.value||'').trim();const p=(document.getElementById('fp_'+id)?.value||'').trim();const s=document.getElementById('fs_'+id)?.value||'';return list.filter(o=>(!q||[o.vendor,o.product,o.orderProduct,o.color,o.size,o.orderRound,fmtDateTime(o.orderedAt),o.note].join(' ').toLowerCase().includes(q))&&(!v||o.vendor.includes(v))&&(!p||o.product.includes(p))&&(!s||o.status===s));}
 function renderDatalists(){const vendors=[...new Set([...(state.vendors||[]).map(v=>v.vendor),...orders().map(o=>o.vendor)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));const products=[...new Set([...(state.products||[]).map(p=>p.product),...orders().map(o=>o.product)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));document.getElementById('vendorList').innerHTML=vendors.map(v=>`<option value="${esc(v)}"></option>`).join('');document.getElementById('productList').innerHTML=products.map(p=>`<option value="${esc(p)}"></option>`).join('');}
@@ -237,17 +249,72 @@ function onOrderVendorChange(){const vendor=document.getElementById('orderVendor
 function renderExistingOptions(){const vendor=document.getElementById('orderVendor').value;const product=document.getElementById('orderProduct').value;const p=(state.products||[]).find(x=>x.vendor===vendor&&x.product===product)||(state.products||[]).find(x=>x.product===product);if(p){document.getElementById('orderVendor').value=p.vendor;document.getElementById('orderProductName').value=p.orderProduct||p.product;}const list=orders().filter(o=>(!vendor||o.vendor===vendor)&&(!product||o.product===product));document.getElementById('existingOptions').innerHTML='<div class="pill">선택 상품 기존 발주건 '+list.length+'건 · 같은 옵션 재등록 시 다음 차수 자동부여</div><div style="height:10px"></div>'+tableRows(list.slice(0,20));}
 async function saveVendorFromForm(){const data={vendor:val('vendorName'),code:val('vendorCode'),memo:val('vendorMemo')};if(!data.vendor)return showMsg('업체명을 입력하세요.','danger');await mutate('saveVendor',data);['vendorName','vendorCode','vendorMemo'].forEach(id=>document.getElementById(id).value='');showMsg('업체가 저장되었습니다.');}
 async function saveProductFromForm(){const data={vendor:val('productVendor'),product:val('productName'),orderProduct:val('productOrderName')||val('productName'),memo:val('productMemo')};if(!data.vendor||!data.product)return showMsg('업체명과 상품명을 입력하세요.','danger');await mutate('saveProduct',data);['productName','productOrderName','productMemo'].forEach(id=>document.getElementById(id).value='');showMsg('상품이 저장되었습니다.');}
-async function saveOrderFromForm(){const data={vendor:val('orderVendor'),product:val('orderProduct'),orderProduct:val('orderProductName')||val('orderProduct'),color:val('orderColor'),size:val('orderSize')||'FREE',ordered:Number(val('orderQty')||0),received:Number(val('receiveQty')||0),note:val('orderNote'),orderedAt:val('orderDate')?new Date(val('orderDate')).toISOString():new Date().toISOString()};if(!data.vendor||!data.product||!data.color)return showMsg('업체, 상품명, 컬러는 필수입니다.','danger');data.orderRound=nextOrderRoundLabel(data);await mutate('saveOrder',data);['orderColor','orderNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('orderQty').value=1;document.getElementById('receiveQty').value=0;setDefaultOrderDate();showMsg(`${data.orderRound} 발주건이 저장되었습니다.`);renderExistingOptions();}
-async function saveReceived(id){const o=orders().find(x=>x.id===id);const received=Number(document.getElementById('recv_'+id).value||0);await mutate('updateReceived',{id,received,note:o?.note||''});showMsg('입고수량이 저장되었습니다.');}
-function plusOne(id){const el=document.getElementById('recv_'+id);el.value=Number(el.value||0)+1;saveReceived(id);}
-async function deleteOrder(id){if(!confirm('이 주문 옵션을 삭제할까요?'))return;await mutate('deleteOrder',{id});showMsg('삭제되었습니다.');}
+async function saveOrderFromForm(){
+  const data={vendor:val('orderVendor'),product:val('orderProduct'),orderProduct:val('orderProductName')||val('orderProduct'),color:val('orderColor'),size:val('orderSize')||'FREE',ordered:Number(val('orderQty')||0),received:Number(val('receiveQty')||0),note:val('orderNote'),orderedAt:val('orderDate')?new Date(val('orderDate')).toISOString():new Date().toISOString()};
+  if(!data.vendor||!data.product||!data.color)return showMsg('업체, 상품명, 컬러는 필수입니다.','danger');
+  if(data.ordered<=0)return showMsg('발주수량은 1장 이상 입력하세요.','danger');
+  if(data.received<0)return showMsg('입고수량은 0 이상으로 입력하세요.','danger');
+  if(data.received>0&&!confirm(`${data.vendor} / ${data.product} / ${data.color} ${data.size}
+발주 ${data.ordered}장 중 ${data.received}장 입고가 맞습니까?`))return;
+  if(data.received>data.ordered&&!confirm(`발주수량은 ${data.ordered}장인데 입고수량이 ${data.received}장입니다.
+초과입고로 저장할까요?`))return;
+  data.orderRound=nextOrderRoundLabel(data);
+  await mutate('saveOrder',data);
+  ['orderColor','orderNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('orderQty').value=1;
+  document.getElementById('receiveQty').value=0;
+  setDefaultOrderDate();
+  showMsg(`${data.orderRound} 발주건이 저장되었습니다.`);
+  renderExistingOptions();
+}
+async function saveReceived(id){
+  const o=orders().find(x=>x.id===id);
+  if(!o)return showMsg('해당 발주건을 찾을 수 없습니다.','danger');
+  const received=Number(document.getElementById('recv_'+id).value||0);
+  if(received<0)return showMsg('입고수량은 0 이상으로 입력하세요.','danger');
+  const msg=`${esc(o.vendor)} / ${esc(o.product)} / ${esc(o.color)} ${esc(o.size)}
+${received}장 입고가 맞습니까?`;
+  if(!confirm(msg))return;
+  if(received>o.ordered&&!confirm(`발주수량은 ${o.ordered}장인데 입고수량이 ${received}장입니다.
+초과입고로 저장할까요?`))return;
+  await mutate('updateReceived',{id,received,note:o?.note||''});
+  showMsg(`${received}장 입고수량이 저장되었습니다.`);
+}
+async function deleteOrder(id){
+  const order=orders().find(o=>String(o.id)===String(id));
+  const label=order?`${order.vendor} / ${order.product} / ${order.color} / ${order.size} / ${order.orderRound||''}`:'이 발주건';
+  if(!confirm(`${label}
+
+잘못 주문한 발주건을 삭제할까요?
+삭제하면 구글시트에서도 해당 행이 삭제됩니다.`))return;
+  try{
+    await mutate('deleteOrder',{id});
+    showMsg('발주건을 삭제했습니다.');
+  }catch(e){
+    showMsg('삭제 실패: '+e.message,'danger');
+  }
+}
 function val(id){return document.getElementById(id).value.trim()}
-async function mutate(action,data){if(apiUrl){await postApi({action,data});await refreshData(false);}else{localMutate(action,data);saveLocal();renderAll();}}
+async function mutate(action,data){
+  if(apiUrl){
+    const res=await apiMutate(action,data||{});
+    if(res && res.ok===false) throw new Error(res.error||'저장 실패');
+    await refreshData(false);
+  }else{
+    localMutate(action,data);saveLocal();renderAll();
+  }
+}
 function localMutate(action,data){const now=new Date().toISOString();if(action==='saveVendor'){const ex=state.vendors.find(v=>v.vendor===data.vendor);ex?Object.assign(ex,data,{updatedAt:now}):state.vendors.push({id:uid('v'),createdAt:now,updatedAt:now,...data});} if(action==='saveProduct'){if(!state.vendors.find(v=>v.vendor===data.vendor))state.vendors.push({id:uid('v'),vendor:data.vendor});const ex=state.products.find(p=>p.vendor===data.vendor&&p.product===data.product);ex?Object.assign(ex,data,{updatedAt:now}):state.products.push({id:uid('p'),createdAt:now,updatedAt:now,...data});} if(action==='saveOrder'){localMutate('saveProduct',{vendor:data.vendor,product:data.product,orderProduct:data.orderProduct});data.orderedAt=data.orderedAt||now;data.orderRound=data.orderRound||nextOrderRoundLabel(data); if(data.id){const ex=state.orders.find(o=>o.id===data.id); ex?Object.assign(ex,data,{updatedAt:now}):state.orders.push({id:data.id,createdAt:now,updatedAt:now,...data});} else {state.orders.push({id:uid('o'),createdAt:now,updatedAt:now,...data});}} if(action==='updateReceived'){const ex=state.orders.find(o=>o.id===data.id);if(ex)Object.assign(ex,{received:data.received,note:data.note??ex.note,updatedAt:now});} if(action==='deleteOrder'){state.orders=state.orders.filter(o=>o.id!==data.id);} if(action==='initSeed'){data.rows.forEach(r=>localMutate('saveOrder',r));}}
 function saveApiUrl(){apiUrl=val('apiUrl');localStorage.setItem(API_KEY,apiUrl);setMode();showMsg('연동 URL을 저장했습니다. 구글시트 새로고침을 눌러주세요.');}
 async function testApi(){try{if(!apiUrl)saveApiUrl();const res=await jsonp(apiUrl,{action:'ping'});showMsg('연결 성공: '+(res.message||'정상'));}catch(e){showMsg('연결 실패: '+e.message,'danger');}}
 async function refreshData(show=true){if(!apiUrl){renderAll();if(show)showMsg('아직 구글시트 웹 앱 주소가 없습니다. 현재는 로컬 임시저장입니다.','danger');return;}try{const res=await jsonp(apiUrl,{action:'list'});if(!res.ok)throw new Error(res.error||'불러오기 실패');state={vendors:res.data.vendors||[],products:res.data.products||[],orders:res.data.orders||[]};saveLocal();renderAll();if(show)showMsg('구글시트 데이터를 불러왔습니다.');}catch(e){showMsg('구글시트 새로고침 실패: '+e.message,'danger');}}
 async function seedToCloud(){if(!apiUrl){go('settings');return showMsg('먼저 구글 앱스 스크립트 주소를 저장해야 합니다.','danger')}if(!confirm('기존 엑셀 데이터 45개 옵션을 구글시트에 업로드할까요? 이미 있는 동일 옵션은 중복 저장하지 않습니다.'))return;await postApi({action:'initSeed',data:{rows:seedRows}});await refreshData(false);showMsg('기존 엑셀 데이터를 구글시트에 업로드했습니다.');}
+function apiMutate(action,data){
+  // 일반 저장/수정/삭제는 JSONP GET으로 처리합니다. GitHub Pages에서 Apps Script POST/iframe이 막히는 경우가 있어 삭제가 안 되는 문제를 방지합니다.
+  // 기존 엑셀 대량 업로드처럼 데이터가 큰 작업은 postApi를 유지합니다.
+  if(action==='initSeed') return postApi({action,data});
+  return jsonp(apiUrl,{action,data:JSON.stringify(data||{})});
+}
 function postApi(payload){return new Promise((resolve,reject)=>{if(!apiUrl)return reject(new Error('연동 주소 없음'));const iframe=document.createElement('iframe');iframe.name='post_iframe_'+Date.now();iframe.style.display='none';const form=document.createElement('form');form.method='POST';form.action=apiUrl;form.target=iframe.name;form.enctype='application/x-www-form-urlencoded';form.style.display='none';const input=document.createElement('input');input.name='payload';input.value=JSON.stringify(payload);form.appendChild(input);let done=false;const timer=setTimeout(()=>{if(!done){cleanup();reject(new Error('저장 응답 시간 초과'))}},20000);function cleanup(){done=true;clearTimeout(timer);setTimeout(()=>{iframe.remove();form.remove()},100)}iframe.onload=()=>{if(!done){cleanup();resolve({ok:true})}};document.body.appendChild(iframe);document.body.appendChild(form);form.submit();});}
 function jsonp(url,params={}){return new Promise((resolve,reject)=>{const cb='jsonp_'+Date.now()+'_'+Math.random().toString(16).slice(2);const u=new URL(url);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));u.searchParams.set('callback',cb);const script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('연결 시간 초과'))},15000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=(data)=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(new Error('스크립트 호출 실패'))};script.src=u.toString();document.body.appendChild(script);});}
 function downloadCsv(type){let list=orders();if(type==='pending')list=list.filter(o=>o.outstanding>0);if(type==='complete')list=list.filter(o=>o.status==='입고완료');const headers=['id','발주차수','발주일시','업체','상품명','주문상품명','컬러','사이즈','발주수량','입고수량','미송수량','상태','메모','등록일','수정일'];const rows=list.map(o=>[o.id,o.orderRound||'',fmtDateTime(o.orderedAt||o.createdAt),o.vendor,o.product,o.orderProduct,o.color,o.size,o.ordered,o.received,o.outstanding,o.status,o.note||'',o.createdAt||'',o.updatedAt||'']);const csv='\ufeff'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dongdaemun_${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);}
