@@ -6,18 +6,98 @@
   <title>동대문 발주 · 입고 관리</title>
   <script src="./data.js"></script>
   <style>
-    :root{--bg:#f3f6fb;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--panel:#fff;--dark:#0f172a;--blue:#2563eb;--red:#dc2626;--green:#15803d;--amber:#b45309;--shadow:0 18px 40px rgba(15,23,42,.08);--radius:18px}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif;font-size:14px} button,input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff;min-height:40px;padding:0 12px} textarea{padding:10px 12px;min-height:68px} button{cursor:pointer;font-weight:850} button:hover{box-shadow:0 8px 18px rgba(15,23,42,.08)} .app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.side{background:linear-gradient(180deg,#111827,#020617);color:#fff;padding:22px 16px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-weight:950;font-size:20px;letter-spacing:-.04em;margin-bottom:18px}.brand small{display:block;color:#9ca3af;font-size:12px;margin-top:6px}.nav-title{color:#9ca3af;font-size:11px;font-weight:900;margin:18px 8px 8px}.nav button{width:100%;background:transparent;color:#d1d5db;border:0;text-align:left;border-radius:12px;margin-bottom:4px;display:flex;justify-content:space-between}.nav button.active{background:#fff;color:#111827}.badge{border-radius:999px;background:#eef2ff;color:#2563eb;padding:3px 8px;font-size:11px;font-weight:900}.side-box{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);border-radius:16px;padding:14px;margin-top:18px;color:#d1d5db;font-size:12px}.side-box b{display:block;color:#fff;margin-bottom:6px}main{padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}h1{margin:0 0 8px;font-size:34px;letter-spacing:-.05em}.lead{margin:0;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.btn-dark{background:var(--dark);border-color:var(--dark);color:#fff}.btn-blue{background:var(--blue);border-color:var(--blue);color:#fff}.btn-green{background:#dcfce7;border-color:#bbf7d0;color:var(--green)}.btn-red{background:#fee2e2;border-color:#fecaca;color:var(--red)}.btn-soft{background:#f8fafc}.mode{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px;border:1px solid var(--line);background:#fff}.mode.cloud{color:var(--green);background:#f0fdf4;border-color:#bbf7d0}.mode.local{color:var(--amber);background:#fffbeb;border-color:#fde68a}.cards{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;margin-bottom:16px}.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}.card .k{color:var(--muted);font-size:12px;font-weight:900}.card .v{font-size:30px;font-weight:950;letter-spacing:-.05em;margin-top:8px}.card small{display:block;color:var(--muted);margin-top:6px}.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}.panel-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.panel-title{font-size:17px;font-weight:950;letter-spacing:-.03em}.panel-sub{font-size:12px;color:var(--muted);margin-top:3px}.panel-body{padding:16px 18px}.grid{display:grid;gap:10px}.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid.cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.field label{display:block;font-size:12px;font-weight:900;color:#374151;margin-bottom:6px}.field input,.field select,.field textarea{width:100%}.span-2{grid-column:span 2}.span-3{grid-column:span 3}.toolbar{display:grid;grid-template-columns:1.4fr .7fr .7fr .7fr auto auto;gap:8px;margin-bottom:12px}.section{display:none}.section.active{display:block}.table-wrap{overflow:auto;max-height:66vh;border:1px solid var(--line);border-radius:14px}table{width:100%;min-width:1120px;border-collapse:separate;border-spacing:0;font-size:13px}thead th{position:sticky;top:0;background:#f8fafc;z-index:2;padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}tbody td{padding:9px 10px;border-bottom:1px solid #f1f5f9;white-space:nowrap;vertical-align:middle}tbody tr:hover{background:#f9fafb}.num{text-align:right;font-variant-numeric:tabular-nums}.muted{color:var(--muted)}.status{display:inline-flex;justify-content:center;min-width:74px;border-radius:999px;padding:5px 9px;font-weight:950;font-size:12px}.status.pending{background:#fee2e2;color:#dc2626}.status.complete{background:#dcfce7;color:#15803d}.status.over{background:#fef3c7;color:#b45309}.qty{width:80px;min-height:34px;text-align:right;border-radius:10px}.pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-weight:850;font-size:12px}.notice{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:14px;padding:12px 14px;font-weight:800;margin-bottom:12px}.ok{border-color:#bbf7d0;background:#f0fdf4;color:#166534}.danger{border-color:#fecaca;background:#fef2f2;color:#991b1b}.empty{padding:24px;text-align:center;color:var(--muted)}.mini-actions{display:flex;gap:6px;justify-content:flex-end}.mini-actions button{min-height:32px;padding:0 9px;border-radius:9px;font-size:12px}.api-row{display:grid;grid-template-columns:1fr auto auto;gap:8px}.hidden{display:none!important}@media(max-width:1100px){.app{display:block}.side{position:relative;height:auto}.cards{grid-template-columns:repeat(2,1fr)}.toolbar,.grid.cols-6,.grid.cols-4,.grid.cols-3,.grid.cols-2,.api-row{grid-template-columns:1fr}.top{display:block}.actions{justify-content:flex-start;margin-top:12px}}
+    :root{
+      --bg:#f4f6f9;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--panel:#fff;
+      --dark:#111827;--blue:#2563eb;--red:#dc2626;--green:#15803d;--amber:#b45309;
+      --shadow:0 8px 22px rgba(15,23,42,.06);--radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif;font-size:12.5px;line-height:1.35}
+    button,input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:8px;background:#fff;min-height:30px;padding:0 8px;color:var(--ink)}
+    textarea{padding:8px;min-height:56px}
+    button{cursor:pointer;font-weight:800;white-space:nowrap}
+    button:hover{box-shadow:0 5px 14px rgba(15,23,42,.08)}
+
+    .app{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:100vh}
+    .side{background:linear-gradient(180deg,#111827,#020617);color:#fff;padding:16px 10px;position:sticky;top:0;height:100vh;overflow:auto}
+    .brand{font-weight:950;font-size:17px;letter-spacing:-.04em;margin-bottom:14px;line-height:1.15}
+    .brand small{display:block;color:#9ca3af;font-size:11px;margin-top:5px;font-weight:700;letter-spacing:0}
+    .nav-title{color:#9ca3af;font-size:10px;font-weight:900;margin:14px 6px 6px}
+    .nav button{width:100%;background:transparent;color:#d1d5db;border:0;text-align:left;border-radius:9px;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center;min-height:32px;padding:0 9px}
+    .nav button.active{background:#fff;color:#111827}
+    .badge{border-radius:999px;background:#eef2ff;color:#2563eb;padding:2px 6px;font-size:10px;font-weight:900}
+    .side-box{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:12px;padding:10px;margin-top:12px;color:#d1d5db;font-size:11px}
+    .side-box b{display:block;color:#fff;margin-bottom:4px}
+
+    main{padding:14px 16px}
+    .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+    h1{margin:0 0 4px;font-size:24px;letter-spacing:-.05em;line-height:1.15}
+    .lead{margin:0;color:var(--muted);font-size:12px}
+    .actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+    .actions button{min-height:30px;padding:0 10px}
+    .btn-dark{background:var(--dark);border-color:var(--dark);color:#fff}
+    .btn-blue{background:var(--blue);border-color:var(--blue);color:#fff}
+    .btn-green{background:#dcfce7;border-color:#bbf7d0;color:var(--green)}
+    .btn-red{background:#fee2e2;border-color:#fecaca;color:var(--red)}
+    .btn-soft{background:#f8fafc}
+    .mode{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:6px 9px;font-weight:900;font-size:11px;border:1px solid var(--line);background:#fff;min-height:30px}
+    .mode.cloud{color:var(--green);background:#f0fdf4;border-color:#bbf7d0}
+    .mode.local{color:var(--amber);background:#fffbeb;border-color:#fde68a}
+
+    .cards{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-bottom:10px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:10px 11px;box-shadow:var(--shadow);min-height:72px}
+    .card .k{color:var(--muted);font-size:11px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card .v{font-size:21px;font-weight:950;letter-spacing:-.05em;margin-top:4px;line-height:1.05}
+    .card small{display:block;color:var(--muted);margin-top:4px;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+    .panel-head{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center;background:#fff}
+    .panel-title{font-size:14px;font-weight:950;letter-spacing:-.03em}
+    .panel-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .panel-body{padding:10px 12px}
+
+    .grid{display:grid;gap:8px}
+    .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .grid.cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .field label{display:block;font-size:11px;font-weight:900;color:#374151;margin-bottom:4px}
+    .field input,.field select,.field textarea{width:100%}
+    .span-2{grid-column:span 2}.span-3{grid-column:span 3}
+
+    .toolbar{display:grid;grid-template-columns:1.4fr .72fr .72fr .72fr auto auto;gap:6px;margin-bottom:8px}
+    .section{display:none}.section.active{display:block}
+    .table-wrap{overflow:auto;max-height:68vh;border:1px solid var(--line);border-radius:10px;background:#fff}
+    table{width:100%;min-width:1080px;border-collapse:separate;border-spacing:0;font-size:12px}
+    thead th{position:sticky;top:0;background:#f8fafc;z-index:2;padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;font-size:11.5px}
+    tbody td{padding:6px 8px;border-bottom:1px solid #f1f5f9;white-space:nowrap;vertical-align:middle}
+    tbody tr:hover{background:#f9fafb}
+    .num{text-align:right;font-variant-numeric:tabular-nums}
+    .muted{color:var(--muted)}
+    .status{display:inline-flex;justify-content:center;min-width:62px;border-radius:999px;padding:3px 7px;font-weight:950;font-size:11px}
+    .status.pending{background:#fee2e2;color:#dc2626}.status.complete{background:#dcfce7;color:#15803d}.status.over{background:#fef3c7;color:#b45309}
+    .qty{width:66px;min-height:28px;text-align:right;border-radius:7px;padding:0 6px}
+    .pill{display:inline-flex;gap:5px;align-items:center;padding:4px 8px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-weight:850;font-size:11px}
+    .notice{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:10px;padding:9px 10px;font-weight:800;margin-bottom:8px;font-size:12px}
+    .ok{border-color:#bbf7d0;background:#f0fdf4;color:#166534}.danger{border-color:#fecaca;background:#fef2f2;color:#991b1b}
+    .empty{padding:18px;text-align:center;color:var(--muted)}
+    .mini-actions{display:flex;gap:4px;justify-content:flex-end}
+    .mini-actions button{min-height:26px;padding:0 7px;border-radius:7px;font-size:11px}
+    .api-row{display:grid;grid-template-columns:1fr auto auto;gap:6px}
+    .hidden{display:none!important}
+
+    @media(max-width:1200px){.cards{grid-template-columns:repeat(4,1fr)}.app{grid-template-columns:170px minmax(0,1fr)}}
+    @media(max-width:900px){.app{display:block}.side{position:relative;height:auto}.cards{grid-template-columns:repeat(2,1fr)}.toolbar,.grid.cols-6,.grid.cols-4,.grid.cols-3,.grid.cols-2,.api-row{grid-template-columns:1fr}.top{display:block}.actions{justify-content:flex-start;margin-top:8px}main{padding:12px}h1{font-size:22px}}
   </style>
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand">발주 · 입고 관리<small>Dongdaemun Order & Inbound</small></div>
+    <div class="brand">발주 · 입고 관리<small>동대문 사입 발주·입고 현황</small></div>
     <div class="nav-title">메뉴</div>
     <div class="nav" id="nav"></div>
-    <div class="side-box"><b>저장 방식</b><span id="sideMode">확인 중</span><br>Google Sheet 연동 후에는 모든 등록/입고값이 시트에 저장됩니다.</div>
-    <div class="side-box"><b>CSV 백업</b>전체/미송/입고완료 목록을 CSV로 내려받을 수 있습니다.</div>
+    <div class="side-box"><b>저장 방식</b><span id="sideMode">확인 중</span><br>구글시트 연동 후에는 모든 등록/입고값이 시트에 저장됩니다.</div>
+    <div class="side-box"><b>자료 내려받기</b>전체/미송/입고완료 목록을 엑셀에서 열 수 있는 파일로 받을 수 있습니다.</div>
   </aside>
   <main>
     <div class="top">
@@ -29,7 +109,7 @@
         <span class="mode local" id="modeBadge">로컬 임시저장</span>
         <button class="btn-soft" onclick="go('settings')">연동 설정</button>
         <button class="btn-blue" onclick="refreshData()">구글시트 새로고침</button>
-        <button class="btn-dark" onclick="downloadCsv('all')">전체 CSV</button>
+        <button class="btn-dark" onclick="downloadCsv('all')">전체 내려받기</button>
       </div>
     </div>
 
@@ -38,7 +118,7 @@
     <section id="dashboard" class="section active">
       <div class="cards" id="cards"></div>
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">미송 우선 확인</div><div class="panel-sub">발주수량 - 입고수량 기준으로 아직 남은 품목입니다.</div></div><button onclick="downloadCsv('pending')">미송 CSV</button></div>
+        <div class="panel-head"><div><div class="panel-title">미송 우선 확인</div><div class="panel-sub">발주수량 - 입고수량 기준으로 아직 남은 품목입니다.</div></div><button onclick="downloadCsv('pending')">미송 내려받기</button></div>
         <div class="panel-body"><div id="pendingTop"></div></div>
       </div>
       <div class="grid cols-2">
@@ -69,17 +149,17 @@
 
     <section id="inbound" class="section">
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">입고 처리</div><div class="panel-sub">입고수량을 수정하면 미송과 입고완료가 자동 계산됩니다.</div></div><button onclick="downloadCsv('all')">CSV 다운로드</button></div>
+        <div class="panel-head"><div><div class="panel-title">입고 처리</div><div class="panel-sub">입고수량을 수정하면 미송과 입고완료가 자동 계산됩니다.</div></div><button onclick="downloadCsv('all')">내려받기</button></div>
         <div class="panel-body"><div id="inboundTable"></div></div>
       </div>
     </section>
 
     <section id="pending" class="section">
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">미송 목록</div><div class="panel-sub">입고가 덜 된 품목만 표시합니다.</div></div><button onclick="downloadCsv('pending')">미송 CSV</button></div><div class="panel-body"><div id="pendingTable"></div></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">미송 목록</div><div class="panel-sub">입고가 덜 된 품목만 표시합니다.</div></div><button onclick="downloadCsv('pending')">미송 내려받기</button></div><div class="panel-body"><div id="pendingTable"></div></div></div>
     </section>
 
     <section id="complete" class="section">
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">입고완료 목록</div><div class="panel-sub">미송수량이 0인 품목입니다.</div></div><button onclick="downloadCsv('complete')">완료 CSV</button></div><div class="panel-body"><div id="completeTable"></div></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">입고완료 목록</div><div class="panel-sub">미송수량이 0인 품목입니다.</div></div><button onclick="downloadCsv('complete')">완료 내려받기</button></div><div class="panel-body"><div id="completeTable"></div></div></div>
     </section>
 
     <section id="master" class="section">
@@ -97,14 +177,14 @@
 
     <section id="settings" class="section">
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">Google Sheet 연동 설정</div><div class="panel-sub">Apps Script 웹 앱 URL을 넣으면 입력값이 Google Sheet에 저장됩니다.</div></div></div>
+        <div class="panel-head"><div><div class="panel-title">구글시트 연동 설정</div><div class="panel-sub">구글 앱스 스크립트 웹 앱 주소를 넣으면 입력값이 구글시트에 저장됩니다.</div></div></div>
         <div class="panel-body">
-          <div class="notice">아직 URL을 넣지 않으면 이 PC 브라우저에만 임시 저장됩니다. 여러 명이 같이 쓰려면 Google Sheet 연동이 필요합니다.</div>
-          <div class="api-row"><input id="apiUrl" placeholder="https://script.google.com/macros/s/....../exec"><button class="btn-dark" onclick="saveApiUrl()">연결 저장</button><button onclick="testApi()">연결 테스트</button></div>
-          <div style="margin-top:12px" class="actions"><button class="btn-blue" onclick="refreshData()">구글시트 데이터 불러오기</button><button class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button><button onclick="downloadCsv('all')">전체 CSV 다운로드</button><button class="btn-red" onclick="clearLocalOnly()">로컬 임시데이터 삭제</button></div>
+          <div class="notice">아직 웹 앱 주소를 넣지 않으면 이 PC 브라우저에만 임시 저장됩니다. 여러 명이 같이 쓰려면 구글시트 연동이 필요합니다.</div>
+          <div class="field"><label>웹 앱 URL 붙여넣기</label></div><div class="api-row"><input id="apiUrl" placeholder="https://script.google.com/macros/s/....../exec"><button class="btn-dark" onclick="saveApiUrl()">연결 저장</button><button onclick="testApi()">연결 테스트</button></div>
+          <div style="margin-top:12px" class="actions"><button class="btn-blue" onclick="refreshData()">구글시트 데이터 불러오기</button><button class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button><button onclick="downloadCsv('all')">전체 내려받기 다운로드</button><button class="btn-red" onclick="clearLocalOnly()">로컬 임시데이터 삭제</button></div>
         </div>
       </div>
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">설치 순서</div><div class="panel-sub">README.md에도 같은 내용이 있습니다.</div></div></div><div class="panel-body"><ol><li>Google Sheet 생성</li><li>확장 프로그램 → Apps Script → <b>google_apps_script.gs</b> 전체 붙여넣기</li><li>setup 함수 한 번 실행 후 권한 승인</li><li>배포 → 새 배포 → 웹 앱</li><li>실행 사용자: 나 / 액세스 권한: 링크가 있는 모든 사용자</li><li>웹 앱 URL을 이 화면에 붙여넣고 저장</li><li>처음 한 번만 기존 엑셀 데이터 업로드</li></ol></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">설치 순서</div><div class="panel-sub">처음 연결할 때 이 순서대로 진행하세요.</div></div></div><div class="panel-body"><ol><li>구글시트에서 <b>확장 프로그램 → Apps Script</b>를 엽니다.</li><li><b>google_apps_script.gs</b> 내용을 전체 붙여넣고 저장합니다.</li><li>함수 선택에서 <b>초기설정</b> 또는 <b>setup</b>을 선택한 뒤 실행합니다.</li><li>구글 권한 승인 후 시트 하단에 <b>업체마스터 / 상품마스터 / 발주입고내역</b> 탭이 생겼는지 확인합니다.</li><li><b>배포 → 새 배포 → 웹 앱</b>으로 배포합니다. 실행 사용자는 <b>나</b>, 액세스 권한은 <b>링크가 있는 모든 사용자</b>로 설정합니다.</li><li>배포 완료 화면에서 <b>/exec</b>로 끝나는 웹 앱 URL을 복사합니다.</li><li>이 화면 위쪽 <b>웹 앱 URL 붙여넣기</b> 칸에 붙여넣고 <b>연결 저장 → 연결 테스트</b>를 누릅니다.</li><li>연결 성공이 나오면 <b>기존 엑셀 데이터 구글시트 업로드</b>를 한 번만 누릅니다.</li></ol></div></div>
     </section>
   </main>
 </div>
@@ -130,7 +210,7 @@ function showMsg(text,type='ok'){document.getElementById('message').innerHTML=`<
 function renderNav(){document.getElementById('nav').innerHTML=navItems.map(([id,label])=>`<button class="${id===currentView?'active':''}" onclick="go('${id}')"><span>${label}</span><span class="badge">${navCount(id)}</span></button>`).join('')}
 function navCount(id){const s=summary();return id==='pending'?s.pendingCount:id==='complete'?s.completeCount:id==='master'?s.vendorCount:id==='inbound'?s.optionCount:''}
 function go(id){currentView=id;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');renderAll();}
-function setMode(){const connected=!!apiUrl;document.getElementById('modeBadge').className='mode '+(connected?'cloud':'local');document.getElementById('modeBadge').textContent=connected?'Google Sheet 저장':'로컬 임시저장';document.getElementById('sideMode').textContent=connected?'Google Sheet 연동 중':'이 PC 브라우저 임시저장';document.getElementById('apiUrl').value=apiUrl;}
+function setMode(){const connected=!!apiUrl;document.getElementById('modeBadge').className='mode '+(connected?'cloud':'local');document.getElementById('modeBadge').textContent=connected?'구글시트 저장':'로컬 임시저장';document.getElementById('sideMode').textContent=connected?'구글시트 연동 중':'이 PC 브라우저 임시저장';document.getElementById('apiUrl').value=apiUrl;}
 function renderCards(){const s=summary();const rows=[['총 발주',s.totalOrdered,'전체 발주수량'],['총 입고',s.totalReceived,`입고율 ${s.rate}%`],['총 미송',s.totalOutstanding,'발주-입고'],['업체',s.vendorCount,'등록/사용 업체'],['상품',s.productCount,'업체+상품 기준'],['옵션',s.optionCount,'컬러/사이즈 기준'],['입고완료',s.completeCount,'미송 0']];document.getElementById('cards').innerHTML=rows.map(r=>`<div class="card"><div class="k">${r[0]}</div><div class="v">${r[1].toLocaleString()}</div><small>${r[2]}</small></div>`).join('')}
 function tableRows(list,{edit=false,actions=false}={}){if(!list.length)return'<div class="empty">표시할 데이터가 없습니다.</div>';return`<div class="table-wrap"><table><thead><tr><th>상태</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th>${actions?'<th></th>':''}</tr></thead><tbody>${list.map(o=>`<tr><td>${statusHtml(o)}</td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${edit?`<input class="qty" type="number" min="0" value="${o.received}" id="recv_${o.id}">`:o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td>${actions?`<td><div class="mini-actions">${edit?`<button class="btn-blue" onclick="saveReceived('${o.id}')">저장</button><button onclick="plusOne('${o.id}')">+1</button>`:''}<button class="btn-red" onclick="deleteOrder('${o.id}')">삭제</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
 function statusHtml(o){const cls=o.status==='입고완료'?'complete':o.status==='초과입고'?'over':'pending';return`<span class="status ${cls}">${o.status}</span>`}
@@ -139,7 +219,7 @@ function renderDashboard(){renderCards();const os=orders();document.getElementBy
 function groupBy(list,fn){const m=new Map();list.forEach(o=>{const k=fn(o);if(!m.has(k))m.set(k,[]);m.get(k).push(o)});return [...m.entries()].map(([name,rows])=>({name,ordered:sum(rows,'ordered'),received:sum(rows,'received'),outstanding:sum(rows,'outstanding')})).sort((a,b)=>b.outstanding-a.outstanding).slice(0,20)}
 function summaryTable(list){if(!list.length)return'<div class="empty">데이터 없음</div>';return`<div class="table-wrap" style="max-height:420px"><table style="min-width:520px"><thead><tr><th>구분</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th></tr></thead><tbody>${list.map(x=>`<tr><td>${esc(x.name)}</td><td class="num">${x.ordered}</td><td class="num">${x.received}</td><td class="num"><b>${x.outstanding}</b></td></tr>`).join('')}</tbody></table></div>`}
 function renderLists(){const os=orders();document.getElementById('inboundTable').innerHTML=filterToolbar('inbound')+tableRows(applyFilter(os,'inbound'),{edit:true,actions:true});document.getElementById('pendingTable').innerHTML=filterToolbar('pending')+tableRows(applyFilter(os.filter(o=>o.outstanding>0),'pending'),{edit:true,actions:true});document.getElementById('completeTable').innerHTML=filterToolbar('complete')+tableRows(applyFilter(os.filter(o=>o.status==='입고완료'),'complete'),{edit:false,actions:true});}
-function filterToolbar(id){return`<div class="toolbar"><input id="q_${id}" placeholder="업체/상품/컬러 검색" oninput="renderLists()" value="${esc(document.getElementById('q_'+id)?.value||'')}"><input id="fv_${id}" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_'+id)?.value||'')}"><input id="fp_${id}" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_'+id)?.value||'')}"><select id="fs_${id}" onchange="renderLists()"><option value="">상태 전체</option><option>미송</option><option>입고완료</option><option>초과입고</option></select><button onclick="downloadCsv('${id==='pending'?'pending':id==='complete'?'complete':'all'}')">CSV</button><button onclick="refreshData()">새로고침</button></div>`}
+function filterToolbar(id){return`<div class="toolbar"><input id="q_${id}" placeholder="업체/상품/컬러 검색" oninput="renderLists()" value="${esc(document.getElementById('q_'+id)?.value||'')}"><input id="fv_${id}" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_'+id)?.value||'')}"><input id="fp_${id}" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_'+id)?.value||'')}"><select id="fs_${id}" onchange="renderLists()"><option value="">상태 전체</option><option>미송</option><option>입고완료</option><option>초과입고</option></select><button onclick="downloadCsv('${id==='pending'?'pending':id==='complete'?'complete':'all'}')">내려받기</button><button onclick="refreshData()">새로고침</button></div>`}
 function applyFilter(list,id){const q=(document.getElementById('q_'+id)?.value||'').trim().toLowerCase();const v=(document.getElementById('fv_'+id)?.value||'').trim();const p=(document.getElementById('fp_'+id)?.value||'').trim();const s=document.getElementById('fs_'+id)?.value||'';return list.filter(o=>(!q||[o.vendor,o.product,o.orderProduct,o.color,o.size,o.note].join(' ').toLowerCase().includes(q))&&(!v||o.vendor.includes(v))&&(!p||o.product.includes(p))&&(!s||o.status===s));}
 function renderDatalists(){const vendors=[...new Set([...(state.vendors||[]).map(v=>v.vendor),...orders().map(o=>o.vendor)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));const products=[...new Set([...(state.products||[]).map(p=>p.product),...orders().map(o=>o.product)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));document.getElementById('vendorList').innerHTML=vendors.map(v=>`<option value="${esc(v)}"></option>`).join('');document.getElementById('productList').innerHTML=products.map(p=>`<option value="${esc(p)}"></option>`).join('');}
 function renderMaster(){document.getElementById('vendorMaster').innerHTML=summaryTable((state.vendors||[]).map(v=>({name:v.vendor,ordered:orders().filter(o=>o.vendor===v.vendor).length,received:0,outstanding:0})));document.getElementById('productMaster').innerHTML=summaryTable((state.products||[]).map(p=>({name:p.vendor+' / '+p.product,ordered:orders().filter(o=>o.vendor===p.vendor&&o.product===p.product).length,received:0,outstanding:0})));}
@@ -155,14 +235,14 @@ function val(id){return document.getElementById(id).value.trim()}
 async function mutate(action,data){if(apiUrl){await postApi({action,data});await refreshData(false);}else{localMutate(action,data);saveLocal();renderAll();}}
 function localMutate(action,data){const now=new Date().toISOString();if(action==='saveVendor'){const ex=state.vendors.find(v=>v.vendor===data.vendor);ex?Object.assign(ex,data,{updatedAt:now}):state.vendors.push({id:uid('v'),createdAt:now,updatedAt:now,...data});} if(action==='saveProduct'){if(!state.vendors.find(v=>v.vendor===data.vendor))state.vendors.push({id:uid('v'),vendor:data.vendor});const ex=state.products.find(p=>p.vendor===data.vendor&&p.product===data.product);ex?Object.assign(ex,data,{updatedAt:now}):state.products.push({id:uid('p'),createdAt:now,updatedAt:now,...data});} if(action==='saveOrder'){localMutate('saveProduct',{vendor:data.vendor,product:data.product,orderProduct:data.orderProduct});const ex=state.orders.find(o=>o.vendor===data.vendor&&o.product===data.product&&o.color===data.color&&o.size===data.size);ex?Object.assign(ex,data,{updatedAt:now}):state.orders.push({id:uid('o'),createdAt:now,updatedAt:now,...data});} if(action==='updateReceived'){const ex=state.orders.find(o=>o.id===data.id);if(ex)Object.assign(ex,{received:data.received,note:data.note??ex.note,updatedAt:now});} if(action==='deleteOrder'){state.orders=state.orders.filter(o=>o.id!==data.id);} if(action==='initSeed'){data.rows.forEach(r=>localMutate('saveOrder',r));}}
 function saveApiUrl(){apiUrl=val('apiUrl');localStorage.setItem(API_KEY,apiUrl);setMode();showMsg('연동 URL을 저장했습니다. 구글시트 새로고침을 눌러주세요.');}
-async function testApi(){try{if(!apiUrl)saveApiUrl();const res=await jsonp(apiUrl,{action:'ping'});showMsg('연결 성공: '+(res.message||'OK'));}catch(e){showMsg('연결 실패: '+e.message,'danger');}}
-async function refreshData(show=true){if(!apiUrl){renderAll();if(show)showMsg('아직 Google Sheet URL이 없습니다. 현재는 로컬 임시저장입니다.','danger');return;}try{const res=await jsonp(apiUrl,{action:'list'});if(!res.ok)throw new Error(res.error||'불러오기 실패');state={vendors:res.data.vendors||[],products:res.data.products||[],orders:res.data.orders||[]};saveLocal();renderAll();if(show)showMsg('Google Sheet 데이터를 불러왔습니다.');}catch(e){showMsg('구글시트 새로고침 실패: '+e.message,'danger');}}
-async function seedToCloud(){if(!apiUrl){go('settings');return showMsg('먼저 Apps Script URL을 저장해야 합니다.','danger')}if(!confirm('기존 엑셀 데이터 45개 옵션을 Google Sheet에 업로드할까요? 이미 있는 동일 옵션은 중복 저장하지 않습니다.'))return;await postApi({action:'initSeed',data:{rows:seedRows}});await refreshData(false);showMsg('기존 엑셀 데이터를 Google Sheet에 업로드했습니다.');}
-function postApi(payload){return new Promise((resolve,reject)=>{if(!apiUrl)return reject(new Error('API URL 없음'));const iframe=document.createElement('iframe');iframe.name='post_iframe_'+Date.now();iframe.style.display='none';const form=document.createElement('form');form.method='POST';form.action=apiUrl;form.target=iframe.name;form.enctype='application/x-www-form-urlencoded';form.style.display='none';const input=document.createElement('input');input.name='payload';input.value=JSON.stringify(payload);form.appendChild(input);let done=false;const timer=setTimeout(()=>{if(!done){cleanup();reject(new Error('저장 응답 시간 초과'))}},20000);function cleanup(){done=true;clearTimeout(timer);setTimeout(()=>{iframe.remove();form.remove()},100)}iframe.onload=()=>{if(!done){cleanup();resolve({ok:true})}};document.body.appendChild(iframe);document.body.appendChild(form);form.submit();});}
+async function testApi(){try{if(!apiUrl)saveApiUrl();const res=await jsonp(apiUrl,{action:'ping'});showMsg('연결 성공: '+(res.message||'정상'));}catch(e){showMsg('연결 실패: '+e.message,'danger');}}
+async function refreshData(show=true){if(!apiUrl){renderAll();if(show)showMsg('아직 구글시트 웹 앱 주소가 없습니다. 현재는 로컬 임시저장입니다.','danger');return;}try{const res=await jsonp(apiUrl,{action:'list'});if(!res.ok)throw new Error(res.error||'불러오기 실패');state={vendors:res.data.vendors||[],products:res.data.products||[],orders:res.data.orders||[]};saveLocal();renderAll();if(show)showMsg('구글시트 데이터를 불러왔습니다.');}catch(e){showMsg('구글시트 새로고침 실패: '+e.message,'danger');}}
+async function seedToCloud(){if(!apiUrl){go('settings');return showMsg('먼저 구글 앱스 스크립트 주소를 저장해야 합니다.','danger')}if(!confirm('기존 엑셀 데이터 45개 옵션을 구글시트에 업로드할까요? 이미 있는 동일 옵션은 중복 저장하지 않습니다.'))return;await postApi({action:'initSeed',data:{rows:seedRows}});await refreshData(false);showMsg('기존 엑셀 데이터를 구글시트에 업로드했습니다.');}
+function postApi(payload){return new Promise((resolve,reject)=>{if(!apiUrl)return reject(new Error('연동 주소 없음'));const iframe=document.createElement('iframe');iframe.name='post_iframe_'+Date.now();iframe.style.display='none';const form=document.createElement('form');form.method='POST';form.action=apiUrl;form.target=iframe.name;form.enctype='application/x-www-form-urlencoded';form.style.display='none';const input=document.createElement('input');input.name='payload';input.value=JSON.stringify(payload);form.appendChild(input);let done=false;const timer=setTimeout(()=>{if(!done){cleanup();reject(new Error('저장 응답 시간 초과'))}},20000);function cleanup(){done=true;clearTimeout(timer);setTimeout(()=>{iframe.remove();form.remove()},100)}iframe.onload=()=>{if(!done){cleanup();resolve({ok:true})}};document.body.appendChild(iframe);document.body.appendChild(form);form.submit();});}
 function jsonp(url,params={}){return new Promise((resolve,reject)=>{const cb='jsonp_'+Date.now()+'_'+Math.random().toString(16).slice(2);const u=new URL(url);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));u.searchParams.set('callback',cb);const script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('연결 시간 초과'))},15000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=(data)=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(new Error('스크립트 호출 실패'))};script.src=u.toString();document.body.appendChild(script);});}
 function downloadCsv(type){let list=orders();if(type==='pending')list=list.filter(o=>o.outstanding>0);if(type==='complete')list=list.filter(o=>o.status==='입고완료');const headers=['id','업체','상품명','주문상품명','컬러','사이즈','발주수량','입고수량','미송수량','상태','메모','등록일','수정일'];const rows=list.map(o=>[o.id,o.vendor,o.product,o.orderProduct,o.color,o.size,o.ordered,o.received,o.outstanding,o.status,o.note||'',o.createdAt||'',o.updatedAt||'']);const csv='\ufeff'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dongdaemun_${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);}
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
-function clearLocalOnly(){if(confirm('이 PC 브라우저의 임시 저장값만 삭제합니다. Google Sheet 데이터는 삭제되지 않습니다.')){localStorage.removeItem(STORAGE_KEY);state=buildStateFromSeed();renderAll();showMsg('로컬 임시데이터를 초기화했습니다.')}}
+function clearLocalOnly(){if(confirm('이 PC 브라우저의 임시 저장값만 삭제합니다. 구글시트 데이터는 삭제되지 않습니다.')){localStorage.removeItem(STORAGE_KEY);state=buildStateFromSeed();renderAll();showMsg('로컬 임시데이터를 초기화했습니다.')}}
 function renderAll(){setMode();renderNav();renderDatalists();renderDashboard();renderLists();renderMaster();renderExistingOptions();}
 renderAll();
 if(apiUrl)refreshData(false);
