@@ -95,6 +95,15 @@
     .api-row{display:grid;grid-template-columns:1fr auto auto;gap:6px}
     .hidden{display:none!important}
 
+    .confirm-mask{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px}
+    .confirm-mask.show{display:flex}
+    .confirm-box{width:min(420px,100%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.28);border:1px solid var(--line);overflow:hidden}
+    .confirm-head{padding:13px 15px;border-bottom:1px solid var(--line);font-size:15px;font-weight:950;letter-spacing:-.03em}
+    .confirm-body{padding:16px 15px;color:#111827;font-size:13px;white-space:pre-line;line-height:1.5}
+    .confirm-actions{padding:12px 15px;background:#f8fafc;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:7px}
+    .confirm-actions button{min-width:76px}
+
+
     @media(max-width:1300px){.cards{grid-template-columns:repeat(4,1fr)}.vendor-grid{grid-template-columns:repeat(3,1fr)}.app{grid-template-columns:170px minmax(0,1fr)}}
     @media(max-width:900px){.app{display:block}.side{position:relative;height:auto}.cards,.vendor-grid{grid-template-columns:repeat(2,1fr)}.toolbar,.grid.cols-6,.grid.cols-4,.grid.cols-3,.grid.cols-2,.api-row{grid-template-columns:1fr}.top{display:block}.actions{justify-content:flex-start;margin-top:8px}main{padding:12px}h1{font-size:22px}}
   </style>
@@ -116,9 +125,9 @@
       </div>
       <div class="actions">
         <span class="mode local" id="modeBadge">로컬 임시저장</span>
-        <button class="btn-soft" onclick="go('settings')">연동 설정</button>
-        <button class="btn-blue" onclick="refreshData()">구글시트 새로고침</button>
-        <button class="btn-dark" onclick="downloadCsv('all')">전체 내려받기</button>
+        <button type="button" class="btn-soft" onclick="go('settings')">연동 설정</button>
+        <button type="button" class="btn-blue" onclick="refreshData()">구글시트 새로고침</button>
+        <button type="button" class="btn-dark" onclick="downloadCsv('all')">전체 내려받기</button>
       </div>
     </div>
 
@@ -127,7 +136,7 @@
     <section id="dashboard" class="section active">
       <div class="cards" id="cards"></div>
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">업체별 미송 확인</div><div class="panel-sub">미송은 업체별로 먼저 보고, 업체를 누르면 해당 업체 미송 발주건만 확인합니다.</div></div><button onclick="downloadCsv('pending')">미송 전체 내려받기</button></div>
+        <div class="panel-head"><div><div class="panel-title">업체별 미송 확인</div><div class="panel-sub">미송은 업체별로 먼저 보고, 업체를 누르면 해당 업체 미송 발주건만 확인합니다.</div></div><button type="button" onclick="downloadCsv('pending')">미송 전체 내려받기</button></div>
         <div class="panel-body"><div id="pendingVendorSummary"></div><div id="pendingTop"></div></div>
       </div>
       <div class="grid cols-2">
@@ -138,7 +147,7 @@
 
     <section id="register" class="section">
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">주문상품 / 옵션 등록</div><div class="panel-sub">업체와 상품을 선택한 뒤 색상·사이즈·발주수량을 추가하면 발주차수와 발주일시가 붙은 새 발주건으로 저장됩니다.</div></div><button class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button></div>
+        <div class="panel-head"><div><div class="panel-title">주문상품 / 옵션 등록</div><div class="panel-sub">업체와 상품을 선택한 뒤 색상·사이즈·발주수량을 추가하면 발주차수와 발주일시가 붙은 새 발주건으로 저장됩니다.</div></div><button type="button" class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button></div>
         <div class="panel-body">
           <div class="notice ok">같은 업체/상품/컬러/사이즈를 다시 등록해도 기존 행을 덮어쓰지 않고 <b>2차·3차 발주건</b>으로 새로 저장됩니다.</div>
           <div class="grid cols-6">
@@ -151,7 +160,7 @@
             <div class="field"><label>입고수량</label><input id="receiveQty" type="number" min="0" value="0"></div>
             <div class="field"><label>발주일시</label><input id="orderDate" type="datetime-local"></div>
             <div class="field span-2"><label>메모</label><input id="orderNote" placeholder="필요 시 입력"></div>
-            <div class="field"><label>&nbsp;</label><button class="btn-dark" style="width:100%" onclick="saveOrderFromForm()">추가주문 등록</button></div>
+            <div class="field"><label>&nbsp;</label><button type="button" class="btn-dark" style="width:100%" onclick="saveOrderFromForm()">추가주문 등록</button></div>
           </div>
           <div style="margin-top:16px" id="existingOptions"></div>
         </div>
@@ -160,27 +169,27 @@
 
     <section id="inbound" class="section">
       <div class="panel">
-        <div class="panel-head"><div><div class="panel-title">입고 처리</div><div class="panel-sub">입고수량 입력 후 저장하면 확인창으로 한 번 더 체크합니다.</div></div><button onclick="downloadCsv('all')">내려받기</button></div>
+        <div class="panel-head"><div><div class="panel-title">입고 처리</div><div class="panel-sub">입고수량 입력 후 저장하면 확인창으로 한 번 더 체크합니다.</div></div><button type="button" onclick="downloadCsv('all')">내려받기</button></div>
         <div class="panel-body"><div id="inboundTable"></div></div>
       </div>
     </section>
 
     <section id="pending" class="section">
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">업체별 미송 목록</div><div class="panel-sub">업체를 선택하면 그 업체의 미송 발주건만 표시합니다.</div></div><button onclick="downloadCsv('pending')">미송 전체 내려받기</button></div><div class="panel-body"><div id="pendingVendorTabs"></div><div id="pendingTable"></div></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">업체별 미송 목록</div><div class="panel-sub">업체를 선택하면 그 업체의 미송 발주건만 표시합니다.</div></div><button type="button" onclick="downloadCsv('pending')">미송 전체 내려받기</button></div><div class="panel-body"><div id="pendingVendorTabs"></div><div id="pendingTable"></div></div></div>
     </section>
 
     <section id="complete" class="section">
-      <div class="panel"><div class="panel-head"><div><div class="panel-title">입고완료 목록</div><div class="panel-sub">미송수량이 0인 품목입니다.</div></div><button onclick="downloadCsv('complete')">완료 내려받기</button></div><div class="panel-body"><div id="completeTable"></div></div></div>
+      <div class="panel"><div class="panel-head"><div><div class="panel-title">입고완료 목록</div><div class="panel-sub">미송수량이 0인 품목입니다.</div></div><button type="button" onclick="downloadCsv('complete')">완료 내려받기</button></div><div class="panel-body"><div id="completeTable"></div></div></div>
     </section>
 
     <section id="master" class="section">
       <div class="grid cols-2">
         <div class="panel"><div class="panel-head"><div><div class="panel-title">업체 마스터</div><div class="panel-sub">업체를 미리 등록해서 검색/선택합니다.</div></div></div><div class="panel-body">
-          <div class="grid cols-3"><div class="field"><label>업체명</label><input id="vendorName" placeholder="업체명"></div><div class="field"><label>업체코드</label><input id="vendorCode" placeholder="선택"></div><div class="field"><label>&nbsp;</label><button class="btn-dark" style="width:100%" onclick="saveVendorFromForm()">업체 저장</button></div><div class="field span-3"><label>메모</label><input id="vendorMemo"></div></div>
+          <div class="grid cols-3"><div class="field"><label>업체명</label><input id="vendorName" placeholder="업체명"></div><div class="field"><label>업체코드</label><input id="vendorCode" placeholder="선택"></div><div class="field"><label>&nbsp;</label><button type="button" class="btn-dark" style="width:100%" onclick="saveVendorFromForm()">업체 저장</button></div><div class="field span-3"><label>메모</label><input id="vendorMemo"></div></div>
           <div style="margin-top:14px" id="vendorMaster"></div>
         </div></div>
         <div class="panel"><div class="panel-head"><div><div class="panel-title">상품 마스터</div><div class="panel-sub">상품명은 한 번 등록하고 옵션만 계속 추가합니다.</div></div></div><div class="panel-body">
-          <div class="grid cols-3"><div class="field"><label>업체</label><input id="productVendor" list="vendorList" placeholder="업체명"></div><div class="field"><label>상품명</label><input id="productName" placeholder="상품명"></div><div class="field"><label>주문상품명</label><input id="productOrderName" placeholder="선택"></div><div class="field span-2"><label>메모</label><input id="productMemo"></div><div class="field"><label>&nbsp;</label><button class="btn-dark" style="width:100%" onclick="saveProductFromForm()">상품 저장</button></div></div>
+          <div class="grid cols-3"><div class="field"><label>업체</label><input id="productVendor" list="vendorList" placeholder="업체명"></div><div class="field"><label>상품명</label><input id="productName" placeholder="상품명"></div><div class="field"><label>주문상품명</label><input id="productOrderName" placeholder="선택"></div><div class="field span-2"><label>메모</label><input id="productMemo"></div><div class="field"><label>&nbsp;</label><button type="button" class="btn-dark" style="width:100%" onclick="saveProductFromForm()">상품 저장</button></div></div>
           <div style="margin-top:14px" id="productMaster"></div>
         </div></div>
       </div>
@@ -191,13 +200,24 @@
         <div class="panel-head"><div><div class="panel-title">구글시트 연동 설정</div><div class="panel-sub">구글 앱스 스크립트 웹 앱 주소를 넣으면 입력값이 구글시트에 저장됩니다.</div></div></div>
         <div class="panel-body">
           <div class="notice">아직 웹 앱 주소를 넣지 않으면 이 PC 브라우저에만 임시 저장됩니다. 여러 명이 같이 쓰려면 구글시트 연동이 필요합니다.</div>
-          <div class="field"><label>웹 앱 URL 붙여넣기</label></div><div class="api-row"><input id="apiUrl" placeholder="https://script.google.com/macros/s/....../exec"><button class="btn-dark" onclick="saveApiUrl()">연결 저장</button><button onclick="testApi()">연결 테스트</button></div>
-          <div style="margin-top:12px" class="actions"><button class="btn-blue" onclick="refreshData()">구글시트 데이터 불러오기</button><button class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button><button onclick="downloadCsv('all')">전체 내려받기 다운로드</button><button class="btn-red" onclick="clearLocalOnly()">로컬 임시데이터 삭제</button></div>
+          <div class="field"><label>웹 앱 URL 붙여넣기</label></div><div class="api-row"><input id="apiUrl" placeholder="https://script.google.com/macros/s/....../exec"><button type="button" class="btn-dark" onclick="saveApiUrl()">연결 저장</button><button type="button" onclick="testApi()">연결 테스트</button></div>
+          <div style="margin-top:12px" class="actions"><button type="button" class="btn-blue" onclick="refreshData()">구글시트 데이터 불러오기</button><button type="button" class="btn-green" onclick="seedToCloud()">기존 엑셀 데이터 구글시트 업로드</button><button type="button" onclick="downloadCsv('all')">전체 내려받기 다운로드</button><button type="button" class="btn-red" onclick="clearLocalOnly()">로컬 임시데이터 삭제</button></div>
         </div>
       </div>
       <div class="panel"><div class="panel-head"><div><div class="panel-title">설치 순서</div><div class="panel-sub">처음 연결할 때 이 순서대로 진행하세요.</div></div></div><div class="panel-body"><ol><li>구글시트에서 <b>확장 프로그램 → Apps Script</b>를 엽니다.</li><li><b>google_apps_script.gs</b> 내용을 전체 붙여넣고 저장합니다.</li><li>함수 선택에서 <b>초기설정</b> 또는 <b>setup</b>을 선택한 뒤 실행합니다.</li><li>구글 권한 승인 후 시트 하단에 <b>업체마스터 / 상품마스터 / 발주입고내역</b> 탭이 생겼는지 확인합니다.</li><li><b>배포 → 새 배포 → 웹 앱</b>으로 배포합니다. 실행 사용자는 <b>나</b>, 액세스 권한은 <b>링크가 있는 모든 사용자</b>로 설정합니다.</li><li>배포 완료 화면에서 <b>/exec</b>로 끝나는 웹 앱 URL을 복사합니다.</li><li>이 화면 위쪽 <b>웹 앱 URL 붙여넣기</b> 칸에 붙여넣고 <b>연결 저장 → 연결 테스트</b>를 누릅니다.</li><li>연결 성공이 나오면 <b>기존 엑셀 데이터 구글시트 업로드</b>를 한 번만 누릅니다.</li></ol></div></div>
     </section>
   </main>
+</div>
+
+<div class="confirm-mask" id="confirmMask" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-box">
+    <div class="confirm-head" id="confirmTitle">확인</div>
+    <div class="confirm-body" id="confirmText"></div>
+    <div class="confirm-actions">
+      <button type="button" class="btn-soft" id="confirmCancel">취소</button>
+      <button type="button" class="btn-dark" id="confirmOk">확인</button>
+    </div>
+  </div>
 </div>
 <datalist id="vendorList"></datalist><datalist id="productList"></datalist>
 <script>
@@ -209,6 +229,39 @@ let state=loadLocal();
 let currentView='dashboard';
 let selectedPendingVendor='';
 const navItems=[['dashboard','대시보드'],['register','주문상품 등록'],['inbound','입고 처리'],['pending','업체별 미송'],['complete','입고완료'],['master','마스터 등록'],['settings','연동 설정']];
+
+function askConfirm(message,{title='확인',okText='확인',cancelText='취소',danger=false}={}){
+  return new Promise(resolve=>{
+    const mask=document.getElementById('confirmMask');
+    const text=document.getElementById('confirmText');
+    const titleEl=document.getElementById('confirmTitle');
+    const ok=document.getElementById('confirmOk');
+    const cancel=document.getElementById('confirmCancel');
+    titleEl.textContent=title;
+    text.textContent=message;
+    ok.textContent=okText;
+    cancel.textContent=cancelText;
+    ok.className=danger?'btn-red':'btn-dark';
+    mask.classList.add('show');
+    function done(v){
+      mask.classList.remove('show');
+      ok.removeEventListener('click',onOk);
+      cancel.removeEventListener('click',onCancel);
+      mask.removeEventListener('click',onMask);
+      document.removeEventListener('keydown',onKey);
+      resolve(v);
+    }
+    function onOk(){done(true)}
+    function onCancel(){done(false)}
+    function onMask(e){if(e.target===mask)done(false)}
+    function onKey(e){if(e.key==='Escape')done(false); if(e.key==='Enter')done(true)}
+    ok.addEventListener('click',onOk);
+    cancel.addEventListener('click',onCancel);
+    mask.addEventListener('click',onMask);
+    document.addEventListener('keydown',onKey);
+    setTimeout(()=>cancel.focus(),0);
+  });
+}
 
 function uid(p){return p+'_'+Math.random().toString(16).slice(2)+Date.now().toString(16)}
 function loadLocal(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved&&saved.orders) return saved;}catch(e){} return buildStateFromSeed();}
@@ -225,12 +278,12 @@ function setDefaultOrderDate(){const el=document.getElementById('orderDate');if(
 function sameOption(o,data){return String(o.vendor).trim()===String(data.vendor).trim()&&String(o.product).trim()===String(data.product).trim()&&String(o.color).trim()===String(data.color).trim()&&String(o.size||'FREE').trim()===String(data.size||'FREE').trim()}
 function nextOrderRoundLabel(data){const n=(state.orders||[]).filter(o=>sameOption(o,data)).length+1;return `${n}차 발주`}
 function showMsg(text,type='ok'){document.getElementById('message').innerHTML=`<div class="notice ${type}">${text}</div>`;setTimeout(()=>{document.getElementById('message').innerHTML=''},4200)}
-function renderNav(){document.getElementById('nav').innerHTML=navItems.map(([id,label])=>`<button class="${id===currentView?'active':''}" onclick="go('${id}')"><span>${label}</span><span class="badge">${navCount(id)}</span></button>`).join('')}
+function renderNav(){document.getElementById('nav').innerHTML=navItems.map(([id,label])=>`<button type="button" class="${id===currentView?'active':''}" onclick="go('${id}')"><span>${label}</span><span class="badge">${navCount(id)}</span></button>`).join('')}
 function navCount(id){const s=summary();return id==='pending'?s.pendingCount:id==='complete'?s.completeCount:id==='master'?s.vendorCount:id==='inbound'?s.orderLineCount:''}
 function go(id){currentView=id;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');renderAll();}
 function setMode(){const connected=!!apiUrl;document.getElementById('modeBadge').className='mode '+(connected?'cloud':'local');document.getElementById('modeBadge').textContent=connected?'구글시트 저장':'로컬 임시저장';document.getElementById('sideMode').textContent=connected?'구글시트 연동 중':'이 PC 브라우저 임시저장';document.getElementById('apiUrl').value=apiUrl;}
 function renderCards(){const s=summary();const rows=[['총 발주',s.totalOrdered,'누적 발주수량'],['총 입고',s.totalReceived,`입고율 ${s.rate}%`],['총 미송',s.totalOutstanding,'발주-입고'],['미송업체',s.pendingVendorCount,'미송 남은 업체'],['발주건수',s.orderLineCount,'추가주문 포함'],['업체',s.vendorCount,'등록/사용 업체'],['상품종류',s.productCount,'업체+상품 고유'],['입고완료',s.completeCount,'미송 0']];document.getElementById('cards').innerHTML=rows.map(r=>`<div class="card"><div class="k">${r[0]}</div><div class="v">${r[1].toLocaleString()}</div><small>${r[2]}</small></div>`).join('')}
-function tableRows(list,{edit=false,actions=false}={}){if(!list.length)return'<div class="empty">표시할 데이터가 없습니다.</div>';return`<div class="table-wrap"><table><thead><tr><th>상태</th><th>차수</th><th>발주일시</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th>${actions?'<th></th>':''}</tr></thead><tbody>${list.map(o=>`<tr><td>${statusHtml(o)}</td><td><span class="round">${esc(o.orderRound||'')}</span></td><td><span class="dt">${fmtDateTime(o.orderedAt||o.createdAt)}</span></td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${edit?`<input class="qty" type="number" min="0" value="${o.received}" id="recv_${o.id}">`:o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td>${actions?`<td><div class="mini-actions">${edit?`<button class="btn-blue" onclick="saveReceived('${o.id}')">입고저장</button>`:''}<button class="btn-red" onclick="deleteOrder('${o.id}')">삭제</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
+function tableRows(list,{edit=false,actions=false}={}){if(!list.length)return'<div class="empty">표시할 데이터가 없습니다.</div>';return`<div class="table-wrap"><table><thead><tr><th>상태</th><th>차수</th><th>발주일시</th><th>업체</th><th>상품명</th><th>주문상품명</th><th>컬러</th><th>사이즈</th><th class="num">발주</th><th class="num">입고</th><th class="num">미송</th><th>메모</th>${actions?'<th></th>':''}</tr></thead><tbody>${list.map(o=>`<tr><td>${statusHtml(o)}</td><td><span class="round">${esc(o.orderRound||'')}</span></td><td><span class="dt">${fmtDateTime(o.orderedAt||o.createdAt)}</span></td><td>${esc(o.vendor)}</td><td>${esc(o.product)}</td><td>${esc(o.orderProduct||'')}</td><td>${esc(o.color)}</td><td>${esc(o.size)}</td><td class="num">${o.ordered}</td><td class="num">${edit?`<input class="qty" type="number" min="0" value="${o.received}" id="recv_${o.id}">`:o.received}</td><td class="num"><b>${o.outstanding}</b></td><td>${esc(o.note||'')}</td>${actions?`<td><div class="mini-actions">${edit?`<button type="button" class="btn-blue" onclick="saveReceived('${o.id}')">입고저장</button>`:''}<button type="button" class="btn-red" onclick="deleteOrder('${o.id}')">삭제</button></div></td>`:''}</tr>`).join('')}</tbody></table></div>`}
 function statusHtml(o){const cls=o.status==='입고완료'?'complete':o.status==='초과입고'?'over':'pending';return`<span class="status ${cls}">${o.status}</span>`}
 function esc(v){return String(v??'').replace(/[&<>"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]))}
 function renderDashboard(){renderCards();const os=orders();renderPendingVendorSelector('pendingVendorSummary');const detail=pendingBySelectedVendor(os).slice(0,12);const title=selectedPendingVendor?`${selectedPendingVendor} 미송 상세 ${detail.length}건`:`전체 미송 상세 ${os.filter(o=>o.outstanding>0).length}건`;document.getElementById('pendingTop').innerHTML=`<div class="pill">${esc(title)} · 업체별로 보려면 위 업체 카드를 누르세요. 잘못 등록한 발주건은 오른쪽 삭제 버튼으로 삭제할 수 있습니다.</div><div style="height:8px"></div>`+tableRows(detail,{edit:false,actions:true});document.getElementById('vendorSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor));document.getElementById('productSummary').innerHTML=summaryTable(groupBy(os,o=>o.vendor+' / '+o.product));}
@@ -239,9 +292,9 @@ function summaryTable(list){if(!list.length)return'<div class="empty">데이터 
 function pendingVendorGroups(){return groupBy(orders().filter(o=>o.outstanding>0),o=>o.vendor)}
 function pendingBySelectedVendor(os=orders()){let list=os.filter(o=>o.outstanding>0);if(selectedPendingVendor)list=list.filter(o=>o.vendor===selectedPendingVendor);return list;}
 function selectPendingVendor(v){selectedPendingVendor=v||'';renderAll();if(currentView==='dashboard'||currentView==='pending')document.getElementById(currentView)?.scrollIntoView({block:'start'});}
-function renderPendingVendorSelector(targetId){const el=document.getElementById(targetId);if(!el)return;const groups=pendingVendorGroups();const total=orders().filter(o=>o.outstanding>0);const totalMiss=sum(total,'outstanding');if(!groups.length){el.innerHTML='<div class="empty">미송 업체가 없습니다.</div>';return;}el.innerHTML=`<div class="vendor-grid"><button class="vendor-card ${selectedPendingVendor?'':'active'}" onclick="selectPendingVendor('')"><span class="name">전체 업체</span><span class="meta"><span>${total.length}건</span><span class="miss">미송 ${totalMiss}</span></span></button>${groups.map(g=>`<button class="vendor-card ${selectedPendingVendor===g.name?'active':''}" onclick="selectPendingVendor(decodeURIComponent('${encodeURIComponent(g.name)}'))"><span class="name">${esc(g.name)}</span><span class="meta"><span>${g.count||0}건</span><span class="miss">미송 ${g.outstanding}</span></span></button>`).join('')}</div>`;}
+function renderPendingVendorSelector(targetId){const el=document.getElementById(targetId);if(!el)return;const groups=pendingVendorGroups();const total=orders().filter(o=>o.outstanding>0);const totalMiss=sum(total,'outstanding');if(!groups.length){el.innerHTML='<div class="empty">미송 업체가 없습니다.</div>';return;}el.innerHTML=`<div class="vendor-grid"><button type="button" class="vendor-card ${selectedPendingVendor?'':'active'}" onclick="selectPendingVendor('')"><span class="name">전체 업체</span><span class="meta"><span>${total.length}건</span><span class="miss">미송 ${totalMiss}</span></span></button>${groups.map(g=>`<button type="button" class="vendor-card ${selectedPendingVendor===g.name?'active':''}" onclick="selectPendingVendor(decodeURIComponent('${encodeURIComponent(g.name)}'))"><span class="name">${esc(g.name)}</span><span class="meta"><span>${g.count||0}건</span><span class="miss">미송 ${g.outstanding}</span></span></button>`).join('')}</div>`;}
 function renderLists(){const os=orders();document.getElementById('inboundTable').innerHTML=filterToolbar('inbound')+tableRows(applyFilter(os,'inbound'),{edit:true,actions:true});renderPendingVendorSelector('pendingVendorTabs');document.getElementById('pendingTable').innerHTML=filterToolbar('pending')+tableRows(applyFilter(pendingBySelectedVendor(os),'pending'),{edit:true,actions:true});document.getElementById('completeTable').innerHTML=filterToolbar('complete')+tableRows(applyFilter(os.filter(o=>o.status==='입고완료'),'complete'),{edit:false,actions:true});}
-function filterToolbar(id){return`<div class="toolbar"><input id="q_${id}" placeholder="업체/상품/컬러 검색" oninput="renderLists()" value="${esc(document.getElementById('q_'+id)?.value||'')}"><input id="fv_${id}" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_'+id)?.value||'')}"><input id="fp_${id}" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_'+id)?.value||'')}"><select id="fs_${id}" onchange="renderLists()"><option value="">상태 전체</option><option>미송</option><option>입고완료</option><option>초과입고</option></select><button onclick="downloadCsv('${id==='pending'?'pending':id==='complete'?'complete':'all'}')">내려받기</button><button onclick="refreshData()">새로고침</button></div>`}
+function filterToolbar(id){return`<div class="toolbar"><input id="q_${id}" placeholder="업체/상품/컬러 검색" oninput="renderLists()" value="${esc(document.getElementById('q_'+id)?.value||'')}"><input id="fv_${id}" list="vendorList" placeholder="업체" oninput="renderLists()" value="${esc(document.getElementById('fv_'+id)?.value||'')}"><input id="fp_${id}" list="productList" placeholder="상품" oninput="renderLists()" value="${esc(document.getElementById('fp_'+id)?.value||'')}"><select id="fs_${id}" onchange="renderLists()"><option value="">상태 전체</option><option>미송</option><option>입고완료</option><option>초과입고</option></select><button type="button" onclick="downloadCsv('${id==='pending'?'pending':id==='complete'?'complete':'all'}')">내려받기</button><button type="button" onclick="refreshData()">새로고침</button></div>`}
 function applyFilter(list,id){const q=(document.getElementById('q_'+id)?.value||'').trim().toLowerCase();const v=(document.getElementById('fv_'+id)?.value||'').trim();const p=(document.getElementById('fp_'+id)?.value||'').trim();const s=document.getElementById('fs_'+id)?.value||'';return list.filter(o=>(!q||[o.vendor,o.product,o.orderProduct,o.color,o.size,o.orderRound,fmtDateTime(o.orderedAt),o.note].join(' ').toLowerCase().includes(q))&&(!v||o.vendor.includes(v))&&(!p||o.product.includes(p))&&(!s||o.status===s));}
 function renderDatalists(){const vendors=[...new Set([...(state.vendors||[]).map(v=>v.vendor),...orders().map(o=>o.vendor)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));const products=[...new Set([...(state.products||[]).map(p=>p.product),...orders().map(o=>o.product)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));document.getElementById('vendorList').innerHTML=vendors.map(v=>`<option value="${esc(v)}"></option>`).join('');document.getElementById('productList').innerHTML=products.map(p=>`<option value="${esc(p)}"></option>`).join('');}
 function renderMaster(){document.getElementById('vendorMaster').innerHTML=summaryTable((state.vendors||[]).map(v=>({name:v.vendor,ordered:orders().filter(o=>o.vendor===v.vendor).length,received:0,outstanding:0})));document.getElementById('productMaster').innerHTML=summaryTable((state.products||[]).map(p=>({name:p.vendor+' / '+p.product,ordered:orders().filter(o=>o.vendor===p.vendor&&o.product===p.product).length,received:0,outstanding:0})));}
@@ -254,10 +307,10 @@ async function saveOrderFromForm(){
   if(!data.vendor||!data.product||!data.color)return showMsg('업체, 상품명, 컬러는 필수입니다.','danger');
   if(data.ordered<=0)return showMsg('발주수량은 1장 이상 입력하세요.','danger');
   if(data.received<0)return showMsg('입고수량은 0 이상으로 입력하세요.','danger');
-  if(data.received>0&&!confirm(`${data.vendor} / ${data.product} / ${data.color} ${data.size}
-발주 ${data.ordered}장 중 ${data.received}장 입고가 맞습니까?`))return;
-  if(data.received>data.ordered&&!confirm(`발주수량은 ${data.ordered}장인데 입고수량이 ${data.received}장입니다.
-초과입고로 저장할까요?`))return;
+  if(data.received>0&&!(await askConfirm(`${data.vendor} / ${data.product} / ${data.color} ${data.size}
+발주 ${data.ordered}장 중 ${data.received}장 입고가 맞습니까?`,{title:'입고수량 확인',okText:'맞습니다',cancelText:'다시 확인'})))return;
+  if(data.received>data.ordered&&!(await askConfirm(`발주수량은 ${data.ordered}장인데 입고수량이 ${data.received}장입니다.
+초과입고로 저장할까요?`,{title:'초과입고 확인',okText:'초과입고 저장',cancelText:'취소',danger:true})))return;
   data.orderRound=nextOrderRoundLabel(data);
   await mutate('saveOrder',data);
   ['orderColor','orderNote'].forEach(id=>document.getElementById(id).value='');
@@ -274,19 +327,19 @@ async function saveReceived(id){
   if(received<0)return showMsg('입고수량은 0 이상으로 입력하세요.','danger');
   const msg=`${esc(o.vendor)} / ${esc(o.product)} / ${esc(o.color)} ${esc(o.size)}
 ${received}장 입고가 맞습니까?`;
-  if(!confirm(msg))return;
-  if(received>o.ordered&&!confirm(`발주수량은 ${o.ordered}장인데 입고수량이 ${received}장입니다.
-초과입고로 저장할까요?`))return;
+  if(!(await askConfirm(msg,{title:'입고수량 확인',okText:'맞습니다',cancelText:'다시 확인'})))return;
+  if(received>o.ordered&&!(await askConfirm(`발주수량은 ${o.ordered}장인데 입고수량이 ${received}장입니다.
+초과입고로 저장할까요?`,{title:'초과입고 확인',okText:'초과입고 저장',cancelText:'취소',danger:true})))return;
   await mutate('updateReceived',{id,received,note:o?.note||''});
   showMsg(`${received}장 입고수량이 저장되었습니다.`);
 }
 async function deleteOrder(id){
   const order=orders().find(o=>String(o.id)===String(id));
   const label=order?`${order.vendor} / ${order.product} / ${order.color} / ${order.size} / ${order.orderRound||''}`:'이 발주건';
-  if(!confirm(`${label}
+  if(!(await askConfirm(`${label}
 
 잘못 주문한 발주건을 삭제할까요?
-삭제하면 구글시트에서도 해당 행이 삭제됩니다.`))return;
+삭제하면 구글시트에서도 해당 행이 삭제됩니다.`,{title:'발주건 삭제 확인',okText:'삭제',cancelText:'취소',danger:true})))return;
   try{
     await mutate('deleteOrder',{id});
     showMsg('발주건을 삭제했습니다.');
@@ -308,7 +361,7 @@ function localMutate(action,data){const now=new Date().toISOString();if(action==
 function saveApiUrl(){apiUrl=val('apiUrl');localStorage.setItem(API_KEY,apiUrl);setMode();showMsg('연동 URL을 저장했습니다. 구글시트 새로고침을 눌러주세요.');}
 async function testApi(){try{if(!apiUrl)saveApiUrl();const res=await jsonp(apiUrl,{action:'ping'});showMsg('연결 성공: '+(res.message||'정상'));}catch(e){showMsg('연결 실패: '+e.message,'danger');}}
 async function refreshData(show=true){if(!apiUrl){renderAll();if(show)showMsg('아직 구글시트 웹 앱 주소가 없습니다. 현재는 로컬 임시저장입니다.','danger');return;}try{const res=await jsonp(apiUrl,{action:'list'});if(!res.ok)throw new Error(res.error||'불러오기 실패');state={vendors:res.data.vendors||[],products:res.data.products||[],orders:res.data.orders||[]};saveLocal();renderAll();if(show)showMsg('구글시트 데이터를 불러왔습니다.');}catch(e){showMsg('구글시트 새로고침 실패: '+e.message,'danger');}}
-async function seedToCloud(){if(!apiUrl){go('settings');return showMsg('먼저 구글 앱스 스크립트 주소를 저장해야 합니다.','danger')}if(!confirm('기존 엑셀 데이터 45개 옵션을 구글시트에 업로드할까요? 이미 있는 동일 옵션은 중복 저장하지 않습니다.'))return;await postApi({action:'initSeed',data:{rows:seedRows}});await refreshData(false);showMsg('기존 엑셀 데이터를 구글시트에 업로드했습니다.');}
+async function seedToCloud(){if(!apiUrl){go('settings');return showMsg('먼저 구글 앱스 스크립트 주소를 저장해야 합니다.','danger')}if(!(await askConfirm('기존 엑셀 데이터 45개 옵션을 구글시트에 업로드할까요? 이미 있는 동일 옵션은 중복 저장하지 않습니다.',{title:'기존 데이터 업로드 확인',okText:'업로드',cancelText:'취소'})))return;await postApi({action:'initSeed',data:{rows:seedRows}});await refreshData(false);showMsg('기존 엑셀 데이터를 구글시트에 업로드했습니다.');}
 function apiMutate(action,data){
   // 일반 저장/수정/삭제는 JSONP GET으로 처리합니다. GitHub Pages에서 Apps Script POST/iframe이 막히는 경우가 있어 삭제가 안 되는 문제를 방지합니다.
   // 기존 엑셀 대량 업로드처럼 데이터가 큰 작업은 postApi를 유지합니다.
@@ -319,7 +372,7 @@ function postApi(payload){return new Promise((resolve,reject)=>{if(!apiUrl)retur
 function jsonp(url,params={}){return new Promise((resolve,reject)=>{const cb='jsonp_'+Date.now()+'_'+Math.random().toString(16).slice(2);const u=new URL(url);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));u.searchParams.set('callback',cb);const script=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('연결 시간 초과'))},15000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=(data)=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(new Error('스크립트 호출 실패'))};script.src=u.toString();document.body.appendChild(script);});}
 function downloadCsv(type){let list=orders();if(type==='pending')list=list.filter(o=>o.outstanding>0);if(type==='complete')list=list.filter(o=>o.status==='입고완료');const headers=['id','발주차수','발주일시','업체','상품명','주문상품명','컬러','사이즈','발주수량','입고수량','미송수량','상태','메모','등록일','수정일'];const rows=list.map(o=>[o.id,o.orderRound||'',fmtDateTime(o.orderedAt||o.createdAt),o.vendor,o.product,o.orderProduct,o.color,o.size,o.ordered,o.received,o.outstanding,o.status,o.note||'',o.createdAt||'',o.updatedAt||'']);const csv='\ufeff'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dongdaemun_${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);}
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
-function clearLocalOnly(){if(confirm('이 PC 브라우저의 임시 저장값만 삭제합니다. 구글시트 데이터는 삭제되지 않습니다.')){localStorage.removeItem(STORAGE_KEY);state=buildStateFromSeed();renderAll();showMsg('로컬 임시데이터를 초기화했습니다.')}}
+async function clearLocalOnly(){if(await askConfirm('이 PC 브라우저의 임시 저장값만 삭제합니다. 구글시트 데이터는 삭제되지 않습니다.',{title:'로컬 임시데이터 삭제',okText:'삭제',cancelText:'취소',danger:true})){localStorage.removeItem(STORAGE_KEY);state=buildStateFromSeed();renderAll();showMsg('로컬 임시데이터를 초기화했습니다.')}}
 function renderAll(){setMode();setDefaultOrderDate();renderNav();renderDatalists();renderDashboard();renderLists();renderMaster();renderExistingOptions();}
 renderAll();
 if(apiUrl)refreshData(false);
